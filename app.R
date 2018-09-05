@@ -16,6 +16,18 @@ tracts <-
   st_read("tracts.GeoJSON", stringsAsFactors = F) %>% st_transform(crs = 4326) %>%
   mutate(COUNTYFI_1 = as.character(paste0(STATE, COUNTY)))
 
+f1 <- list(
+  family = "Arial, sans-serif",
+  size = 11,
+  color = "darkgrey"
+)
+
+f2 <- list(
+  family = "Arial, sans-serif",
+  size = 14,
+  color = "black"
+)
+
 
 CHVIdata$def <-
   ifelse(
@@ -23,6 +35,7 @@ CHVIdata$def <-
     "Percent impervious surface cover",
     CHVIdata$def
   )
+
 
 CHVIdata <- left_join(x = CHVIdata, y = {
   data.frame(
@@ -32,7 +45,7 @@ CHVIdata <- left_join(x = CHVIdata, y = {
       "Percent of population age less than 5 years",
       "Number of Violent Crimes per 1,000 Population",
       "Percent of population with a disability",
-      "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+      "Percent of adults with less than HS education" ,
       "Percent of population aged 65 years or older",
       "Projected number of extreme heat days",
       "Percent impervious surface cover",
@@ -72,7 +85,7 @@ CHVIdata <- left_join(x = CHVIdata, y = {
       "% under 5",
       "Violent Crimes/1,000",
       "% with a Disability",
-      "% w/ HS Education",
+      "% w/o HS Education",
       "% over 65",
       "Extreme Heat Days",
       "% Impervious Surface",
@@ -98,7 +111,7 @@ narratives <-
       "Percent of population age less than 5 years",
       "Number of Violent Crimes per 1,000 Population",
       "Percent of population with a disability",
-      "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+      "Percent of adults with less than HS education" ,
       "Percent of population aged 65 years or older",
       "Projected number of extreme heat days",
       "Percent impervious surface cover",
@@ -148,9 +161,12 @@ ui <-  fluidPage(
   
   navbarPage(
     position = "fixed-top",
-    header = tags$head(HTML(
-      "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-8317364-4'></script>"), 
+    header = tags$head(
+      
+      ######## Google Analytics Script Start ###############
+      HTML("<script async src='https://www.googletagmanager.com/gtag/js?id=UA-8317364-4'></script>"), 
       includeScript("g-analytics.js"),
+      ######## Google Analytics Script End ###############
       
       tags$style(
         HTML(
@@ -170,14 +186,15 @@ ui <-  fluidPage(
           
           "
         )
-        ),
+      ),
       tags$style(type = "text/css", "body {padding-top: 70px;}")
-        ),
+    ),
+    
     theme = shinytheme("flatly"),
     title = div(
       "CCHVIz",
       a(
-        href = "https://www.cdph.ca.gov/Programs/OHE/Pages/CCHEP.aspx"
+        href = "https://www.cdph.ca.gov/Programs/OHE/Pages/CCHEP.aspx" 
         ,
         img(
           src = "CDPHLogo.gif",
@@ -228,7 +245,7 @@ ui <-  fluidPage(
                                              "Percent of population age less than 5 years",
                                              "Number of Violent Crimes per 1,000 Population",
                                              "Percent of population with a disability",
-                                             "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+                                             "Percent of adults with less than HS education" ,
                                              "Percent of adults aged 18 - 64 without health insurance",
                                              "Percent of households with no one aged > 14 years speaking English",
                                              "Percent of population employed and aged > 16 working outdoors",
@@ -304,7 +321,7 @@ ui <-  fluidPage(
                                       "Population living in sea level rise inundation areas",
                                       "Percent of population currently living in very high wildfire risk areas",
                                       "Number of Violent Crimes per 1,000 Population",
-                                      "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+                                      "Percent of adults with less than HS education" ,
                                       "Percent of adults aged 18 - 64 without health insurance",
                                       "Percent of households with no one aged > 14 years speaking English",
                                       "Percent of population employed and aged > 16 working outdoors",
@@ -326,7 +343,7 @@ ui <-  fluidPage(
                  #                      "Percent of population age less than 5 years",
                  #                      "Number of Violent Crimes per 1,000 Population",
                  #                      "Percent of population with a disability",
-                 #                      "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+                 #                      "Percent of adults with less than HS education" ,
                  #                      "Percent of adults aged 18 - 64 without health insurance",
                  #                      "Percent of households with no one aged > 14 years speaking English",
                  #                      "Percent of population employed and aged > 16 working outdoors",
@@ -381,7 +398,7 @@ ui <-  fluidPage(
                                              "Percent of population age less than 5 years",
                                              "Number of Violent Crimes per 1,000 Population",
                                              "Percent of population with a disability",
-                                             "High School or Greater Educational Attainment in the Population Aged 25 Years and Older",
+                                             "Percent of adults with less than HS education" ,
                                              "Percent of adults aged 18 - 64 without health insurance",
                                              "Percent of households with no one aged > 14 years speaking English",
                                              "Percent of population employed and aged > 16 working outdoors",
@@ -560,10 +577,12 @@ server <- function(input, output, session) {
       showlegend = FALSE
       ) %>%
       layout(title = paste0('County Snapshot for ',tab1.df[["County"]], ' County -   \n (shows how the values in the county compare to the state average)' ),
+             titlefont=f2,
              margin = list(l = 300,
                            t = 70),
              xaxis = list(
                title = "Ratio to State Average",
+               titlefont=f1,
                size = 4,
                autotick = TRUE,
                ticks = "outside",
@@ -574,6 +593,7 @@ server <- function(input, output, session) {
                tickcolor = toRGB("black")
              ),
              yaxis = list(title = "Indicator and Strata", 
+                          titlefont=f1,
                           type = "category", 
                           dtick=1, 
                           size=2), 
@@ -735,8 +755,8 @@ server <- function(input, output, session) {
  tractData <- reactive({
    
    CHVItracts %>% 
-     filter(def == input$ind & strata == input$strt)  %>%
-     mutate(ct10 = as.character(paste0('0',ct10))) 
+     filter(def == input$ind & strata == input$strt) # %>%
+     # mutate(ct10 = as.character(paste0('0',ct10))) 
   
  })
   
@@ -772,7 +792,7 @@ average <- eventReactive(c(input$ind, input$strt), {
                     "#F2F1E6") ,
         n = 5,
         reverse = TRUE,
-        domain =  na.exclude(mapTemp$est)
+        domain =  unique(na.exclude(mapTemp$est))
       )
       
       pal2 <- colorQuantile(
@@ -783,25 +803,13 @@ average <- eventReactive(c(input$ind, input$strt), {
                      "#F2F1E6"),
         n = 5,
         reverse = TRUE,
-        domain = na.exclude(tractData()$est)
+        domain = unique(na.exclude(tractData()$est))
     
       )
       
       mapTemp %>%
         leaflet()  %>% 
-        addProviderTiles(providers$CartoDB.Positron) %>% 
-        addPolygons(
-          color = "#444444",
-          weight = 1,
-          smoothFactor = 0.1,
-          fillOpacity = 0.6,
-          fillColor = ~ pal(est),
-          highlightOptions = highlightOptions(color = "white", weight = 2,
-                                              bringToFront = TRUE),
-          popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
-                         round(mapTemp$est,1),". The county average is ", round(mean(mapTemp$est, na.rm=T),1),
-                         ". The state average is ", round(average(),1)),
-          group="Tract Qunitiles") %>%
+        addProviderTiles(providers$CartoDB.Positron) %>%  
         addPolygons(
           color = "#444444",
           weight = 1,
@@ -814,8 +822,20 @@ average <- eventReactive(c(input$ind, input$strt), {
                          round(mapTemp$est,1),". The county average is ", round(mean(mapTemp$est, na.rm=T),1),
                          ". The state average is ", round(average(),1)),
           group="State Quintiles") %>%
+        addPolygons(
+          color = "#444444",
+          weight = 1,
+          smoothFactor = 0.1,
+          fillOpacity = 0.6,
+          fillColor = ~ pal(est),
+          highlightOptions = highlightOptions(color = "white", weight = 2,
+                                              bringToFront = TRUE),
+          popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
+                         round(mapTemp$est,1),". The county average is ", round(mean(mapTemp$est, na.rm=T),1),
+                         ". The state average is ", round(average(),1)),
+          group="County Quintiles") %>%
           addLayersControl(
-            baseGroups = c("Tract Qunitiles", "State Quintiles"),
+            baseGroups = c("County Quintiles", "State Quintiles"),
             options = layersControlOptions(collapsed = TRUE)
           ) %>% 
           
@@ -923,10 +943,12 @@ output$downloadSingleIndicatorMap <- downloadHandler(
     ) %>%
       layout(
         title = paste0(input$ind, " \n for California Counties \n (",input$cnty," [dark], Climate region [light], CA avg [dotted])"),
+        titlefont=f2,
         margin = list(l = 130,
                       t = 105),
         xaxis = list(
           title = ifelse(input$strt == "none", input$ind,paste0(input$ind," - ", input$strt)),
+          titlefont=f1,
           autotick = TRUE,
           ticks = "outside",
           tick0 = 0,
@@ -936,6 +958,7 @@ output$downloadSingleIndicatorMap <- downloadHandler(
           tickcolor = toRGB("black")
         ),
         yaxis = list(title = "Counties",
+                     titlefont=f1,
                      type = "categorical",
                      dtick=1,
                      tickfont=list(
@@ -981,14 +1004,16 @@ triple <- reactive({
  
    foo <- {CHVIdata %>% 
       filter(def  == input$exposure & strata %in% c("2085", 2085, "none") & race == "Total") %>%
-      mutate(expTer = ntile(est, 3)) %>%
+      mutate(expTer = ntile(est, 3),
+             def =  ifelse(strata == "none", def,paste0(def," - ", strata))) %>%
       select(county, climReg, COUNTYFI_1, def, est, expTer) %>% 
       spread(key = def, value = est)
   } %>% left_join({
     
     CHVIdata %>% 
       filter(def  == input$sensitivity & strata %in% c("Overall","ViolentCrime","total","2006-2010","2009-2013","All Non-English","none", "population-weighted") & race =="Total") %>%
-      mutate(sensTer = ntile(est, 3)) %>%
+      mutate(sensTer = ntile(est, 3),
+             def =  ifelse(strata == "none", def,paste0(def," - ", strata))) %>%
       select(county, climReg, COUNTYFI_1, def, est, sensTer) %>% 
       spread(key = def, value = est) %>% 
       left_join({
@@ -1090,10 +1115,12 @@ output$downloadVulnerabilityMap <- downloadHandler(
                   size = 10,
                   color = toRGB("grey40"))) %>%
       layout(title = paste('Combined Vulnerability from Exposure (',names(tri)[5],') \n and Sensitivity (',names(tri)[7],")") ,
+             titlefont=f2,
              margin = list(l = 50,
                            t = 70),
              xaxis = list(
                title = names(tri)[5],
+               titlefont = f1, 
                autotick = TRUE,
                ticks = "outside",
                tick0 = 0,
@@ -1103,6 +1130,7 @@ output$downloadVulnerabilityMap <- downloadHandler(
                tickcolor = toRGB("black")
              ),
              yaxis = list(title = names(tri)[7],
+                          titlefont = f1, 
                           autotick = TRUE,
                           ticks = "outside",
                           tick0 = 0,
@@ -1306,15 +1334,15 @@ output$vulnMap <- renderLeaflet({
   
   
   output$downloadCHPR <- renderUI({ 
-    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cntyCHPR, paste0(input$cntyCHPR," "))],' target="_blank">Download County Health Profile</a>'))
+    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cntyCHPR, paste0(input$cntyCHPR," "))],' target="_blank"  onclick="trackOutboundLink("', links$CHPR.Link[links$County %in% c(input$cntyCHPR, paste0(input$cntyCHPR," "))],'"); return false;">Download County Health Profile</a>'))
   })
   
   output$downloadCHPR1 <- renderUI({ 
-    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cnty1, paste0(input$cnty1," "))],' target="_blank">Download County Health Profile</a>'))
+    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cnty1, paste0(input$cnty1," "))],' target="_blank"  onclick="trackOutboundLink("', links$CHPR.Link[links$County %in% c(input$cnty1, paste0(input$cnty1," "))],'"); return false;">Download County Health Profile</a>'))
   })
   
   output$downloadNarrative <- renderUI({ 
-    HTML(paste0('<a href =', narratives$narrativeLink[narratives$def == input$ind],' target="_blank">Download the Narrative for this Indicator</a>'))
+    HTML(paste0('<a href =', narratives$narrativeLink[narratives$def == input$ind],' target="_blank"  onclick="trackOutboundLink("', narratives$narrativeLink[narratives$def == input$ind],'"); return false;">Download the Narrative for this Indicator</a>'))
   })
   
   
@@ -1334,6 +1362,8 @@ output$vulnMap <- renderLeaflet({
   #   }
   # 
   # )
+  
+  outputOptions(output, "map", suspendWhenHidden = FALSE)
   
 }
 

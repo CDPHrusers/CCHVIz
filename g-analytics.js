@@ -22,7 +22,7 @@ $(document).on('shiny:inputchanged', function(event) {
 			  'event_label': event.value
 		  });
        }
-	  if (event.name == 'cnty' || event.name == 'ind' || event.name == 'strt') {
+	  if (event.name == 'cnty' || event.name == 'ind' ) {
           gtag('event', event.name, {
 			  'event_action': 'Select Input',
 			  'event_category': 'Single Indicator',
@@ -37,4 +37,6 @@ $(document).on('shiny:inputchanged', function(event) {
 		  });
        }
      });
-	 
+ 	
+
+		
