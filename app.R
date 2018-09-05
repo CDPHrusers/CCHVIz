@@ -37,6 +37,17 @@ CHVIdata$def <-
   )
 
 
+CHVIdata$strata <-
+  ifelse(
+    CHVIdata$strata == "2085",
+    "2070-2099",
+    ifelse(
+      CHVIdata$strata == "2050",
+      "2035-2064",
+    CHVIdata$strata
+  ))
+
+
 CHVIdata <- left_join(x = CHVIdata, y = {
   data.frame(
     def = c(
@@ -1003,7 +1014,7 @@ output$downloadSingleIndicatorMap <- downloadHandler(
 triple <- reactive({
  
    foo <- {CHVIdata %>% 
-      filter(def  == input$exposure & strata %in% c("2085", 2085, "none") & race == "Total") %>%
+      filter(def  == input$exposure & strata %in% c("2070-2099", 2070-2099, "none") & race == "Total") %>%
       mutate(expTer = ntile(est, 3),
              def =  ifelse(strata == "none", def,paste0(def," - ", strata))) %>%
       select(county, climReg, COUNTYFI_1, def, est, expTer) %>% 
