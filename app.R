@@ -542,7 +542,7 @@ server <- function(input, output, session) {
              Value = est, 
              CA_avg = stateAverage
       ) %>%
-      mutate(label = paste0(defShort, " - ", Strata),
+      mutate(label = ifelse(Strata == "none",paste0(defShort), paste0(defShort, " - ", Strata)),
              ratio = ifelse(is.na(Value), 0, Value/CA_avg),
              Category = ifelse(ratio < 0.9, "below CA average",
                                ifelse(ratio > 1.1, "above CA average","around CA average")),
@@ -581,7 +581,7 @@ server <- function(input, output, session) {
       ),
       type = "bar",
       hoverinfo = 'text',
-      text = ~paste('</br>', paste(tab1.df[["Indicator"]]," - ",tab1.df[["Strata"]]),
+      text = ~paste('</br>', ifelse(tab1.df[["Strata"]] =="none", paste0(tab1.df[["Indicator"]]), paste0(tab1.df[["Indicator"]]," - ",tab1.df[["Strata"]])),
                     '</br> County Value:', round(tab1.df[["Value"]],2),
                     '</br> State Average:', round(tab1.df[["CA_avg"]],2)),
       
