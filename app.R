@@ -139,18 +139,18 @@ narratives <-
     narrativeLink = c(
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/AirConditioning_797_Narrative_12-14-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_TreeCanopy_458_Narrative_12-5-2016.pdf",
-      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Children0to4_788_Narrative_11-8-2016.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Children0to4_788_Narrative.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/HCI_Crime_752-Narrative_Examples-10-30-15.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Disability_Narrative_795_11-16-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Educ_attain_HS_Narrative_Examples4-28-13.pdf",
-      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Elderly_789_Narrative_11-9-2016.pdf",
-      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_ExtremeHeat_Narrative_03-29-2017.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Elderly_789_Narrative.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_ExtremeHeat_Narrative.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/ImperviousSurfaces_423_Narrative_12-2-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Insurance_187_Narrative_11-29-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_LinguisticIsolation_Narrative_11-15-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_OutdoorsWorkers_Narrative_790_12-5-2016.pdf",
-      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Ozone_801_Narrative_11-8-2016.pdf",
-      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_PM25_776_Narrative_8-1-2017.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Ozone_801_Narrative.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_PM25_776_Narrative.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/HCI_PovertyRate_754_Narrative_Examples11-5-13rev3-12-14.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Sealevelrise_Narrative_11-1-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/CarOwnership_37_Narrative_9-6-16.pdf",
@@ -830,8 +830,8 @@ average <- eventReactive(c(input$ind, input$strt), {
           highlightOptions = highlightOptions(color = "white", weight = 2,
                                               bringToFront = TRUE),
           popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
-                         round(mapTemp$est,1),". The county average is ", round(mean(mapTemp$est, na.rm=T),1),
-                         ". The state average is ", round(average(),1)),
+                         round(mapTemp$est,1),"%. The county average is ", round(mean(mapTemp$est, na.rm=T),1),
+                         "%. The state average is ", round(average(),1), "%."),
           group="State Quintiles") %>%
         addPolygons(
           color = "#444444",
@@ -842,12 +842,12 @@ average <- eventReactive(c(input$ind, input$strt), {
           highlightOptions = highlightOptions(color = "white", weight = 2,
                                               bringToFront = TRUE),
           popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
-                         round(mapTemp$est,1),". The county average is ", round(mean(mapTemp$est, na.rm=T),1),
-                         ". The state average is ", round(average(),1)),
+                         round(mapTemp$est,1),"%. The county average is ", round(mean(mapTemp$est, na.rm=T),1),
+                         "%. The state average is ", round(average(),1), "%."),
           group="County Quintiles") %>%
           addLayersControl(
             baseGroups = c("County Quintiles", "State Quintiles"),
-            options = layersControlOptions(collapsed = TRUE)
+            options = layersControlOptions(collapsed = FALSE)
           ) %>% 
           
         addLegend("bottomleft",
@@ -858,7 +858,8 @@ average <- eventReactive(c(input$ind, input$strt), {
                               "#F2F1E6"),
                   opacity = .4,
                   title = input$ind,
-                  labels = c("most vulnerable (top 20th percentile)","","","","least vulnerable (bottom 20th percentile)")
+                  labels = c("Higher than 80% of other tracts (Most Vulnerable)","Higher than 60% of other tracts","Higher than 40% of other tracts","Higher than just 20% of other tracts","Lowest 20% of tracts (Least Vulnerable)")
+                  ##lables = c("X%-X% (most vulnerable)","X%-X%","X%-X%","X%-X%","X%-X% (least"%. In this tract, the "mapTemp$def," is higher than "mapTemp),))##
         )
 
     
