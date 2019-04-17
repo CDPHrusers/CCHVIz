@@ -31,9 +31,4 @@ description: first page for R Resources on CDPH User
 - Lack of Tree Canopy | [description](https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_TreeCanopy_458_Narrative_12-5-2016.pdf) | [data](https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_TreeCanopy_458_CT_PL_CO_RE_CA.xlsx)
 - Impervious Surface Cover | [description](https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/ImperviousSurfaces_423_Narrative_12-2-2016.pdf) | [data](https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_ImperviousSurfaces_423_CT_PL_CO_RE_CA.xlsx)
 
-## Latest Updates
-
-- Vulnerability tab: State map added and color scheme enhanced
-- Single Indicator tab: Larger map viewing and state average added to graph
-
 

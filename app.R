@@ -463,7 +463,7 @@ ui <-  fluidPage(
                          column(9, 
                                 wellPanel(img(
                                   class = "img-polaroid",
-                                  src = "vulnerability2.png",
+                                  src = "vulnGif2.gif",
                                   alt = "How To Vulnerability Page",
                                   objectfit = "contain"
                                 )))
@@ -477,7 +477,7 @@ ui <-  fluidPage(
                                       column(9, 
                                              wellPanel(img(
                                                class = "img-polaroid",
-                                               src = "snapshot.png",
+                                               src = "snapGif.gif",
                                                alt = "How To County Snapshot Page",
                                                objectfit = "contain",
                                                height = "auto",
@@ -493,7 +493,7 @@ ui <-  fluidPage(
                          column(9, 
                                 wellPanel(img(
                                   class = "img-polaroid",
-                                  src = "indicator.png",
+                                  src = "indGif.gif",
                                   alt = "How To Indicator Page", 
                                   height = "auto",
                                   width ="auto"
@@ -509,7 +509,7 @@ ui <-  fluidPage(
                          column(9, 
                                 wellPanel(img(
                                   class = "img-polaroid",
-                                  src = "query.png",
+                                  src = "queryGif.gif",
                                   alt = "How To Query Page"
                                 )))
                         
