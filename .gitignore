@@ -1,3 +1,5 @@
 .geojson
 .csv
 .Rdata
+packrat/lib*/
+.Rproj.user
