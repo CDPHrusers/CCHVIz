@@ -15,4 +15,4 @@ Vulnerability Indicators to help stakeholders better understand the people and p
 
 Indicator data are available for download on the 'Query the Data' tab or from the [CalBRACE website](https://www.cdph.ca.gov/Programs/OHE/Pages/CalBRACE.aspx). You can also download narratives describing each indicator’s significance to climate change and health, the evidence that links the indicator to health outcomes, data sources, bibliographic references, methodology, and limitations that impact the interpretation of the indicator.
 
-If you have questions, comments, or ideas for the site, please do not hesitate to [contact us](mailto:jason.vargo@cdph.ca.gov).
+If you have questions, comments, or ideas for the site, please do not hesitate to [contact us](mailto:cchep@cdph.ca.gov?subject=CCHVIz contact).

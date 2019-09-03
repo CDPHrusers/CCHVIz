@@ -1,17 +1,29 @@
 ##### SERVER #####
 server <- function(input, output, session) {
   
-  averages <- CHVIdata %>%
-    group_by(def, ind, strata) %>%
-    summarise(stateAverage = mean(est, na.rm=T))
   
+  showModal(
+    modalDialog(
+      title = HTML("<h3><center>We are looking for feedback from users like you!</center></h3>"),
+      HTML("<ul>
+       <li>What you are using the information on the site to do?</li> 
+           <li>What do you like? What don't you like?</li>
+           <li>What is missing that you'd like to see?</li></ul> <h1> <center><a href='mailto:cchep@cdph.ca.gov?subject=CCHVIz feedback'>Email us to share your ideas</a></h1>"),
+      footer = NULL,
+      easyClose = T
+      # ,
+      # footer = modalButton("Close")
+    )
+  )
+  
+  CHVIdata <- data.table::copy(CHVIdata)
   
   #####  reactive table (tab 1 - single county) #####
   
   data.tab1 <- eventReactive(input$cnty1,{
     
-    CHVIdata %>% filter(county == input$cnty1 &  race == "Total") %>% 
-      left_join(averages) %>% 
+    CHVIdata[county == input$cnty1 &  race == "Total" & latest == "Y"] %>% 
+      merge(averages, c("def","ind","strata")) %>% 
       rename(County = county, 
              Region = climReg, 
              Indicator = def, 
@@ -41,6 +53,16 @@ server <- function(input, output, session) {
   )
   
   
+  
+  # 
+  # output$test <- renderDataTable({
+  #   
+  #   foo <- input$cntyDNLD
+  #   
+  #   CHVIdata})
+  # output$test2 <- renderDataTable(triple())
+  # 
+  # 
   
   
   ##### generate County (tab 1 - single county) Plot #####
@@ -155,7 +177,7 @@ server <- function(input, output, session) {
   output$countyTable <- DT::renderDataTable({DT::datatable(
     
     data.tab1() %>%
-      select(County, Region, Indicator, Strata, Value, CA_avg, Category), 
+         select(County, Region, Indicator, Strata, Value, CA_avg, Category), 
     options=list(pageLength = 25)
   )  %>% DT::formatRound(c(5,6), 1)
     
@@ -183,9 +205,11 @@ server <- function(input, output, session) {
   
   data.tab2 <- reactive({
     
+    req(input$ind, input$strt)
+    
     CHVIdata %>%
-      mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
-      filter(def == input$ind & strata == input$strt & race == "Total") %>%
+      # mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
+      filter(def == input$ind & strata == input$strt & race == "Total" & latest == "Y") %>%
       rename(
         County = county,
         Region = climReg,
@@ -241,15 +265,18 @@ server <- function(input, output, session) {
   ##### Census tract data (tab 2 - single indicator) ######
   
   tractData <- reactive({
+    req(input$ind, input$strt)
     
-    CHVItracts %>% 
-      filter(def == input$ind & strata == input$strt) # %>%
+    CHVItracts[def == input$ind & strata == input$strt & latest == "Y" & race == "Total"] # %>%
     # mutate(ct10 = as.character(paste0('0',ct10))) 
     
   })
   
   
   selectedFIPS <- eventReactive(input$cnty, {
+    
+    
+    # as.character(paste0(CHVIdata$COUNTYFI_1[CHVIdata$county == "Alameda"][1]))
     
     as.character(paste0(CHVIdata$COUNTYFI_1[CHVIdata$county == input$cnty][1]))
     
@@ -268,7 +295,7 @@ server <- function(input, output, session) {
     
     mapTemp <- tracts %>% 
       filter(COUNTYFI_1 == selectedFIPS()) %>%
-      left_join(tractData()) 
+      left_join(tractData(), by = "ct10" ) 
     
     # countyTemp <- left_join(counties, data.tab2())
     
@@ -283,38 +310,39 @@ server <- function(input, output, session) {
       domain =  unique(na.exclude(mapTemp$est))
     )
     
-    pal2 <- colorQuantile(
-      palette =  c("#685DA9",
-                   "#CB6F6B", 
-                   "#EFA96E",  
-                   "#2A8CC5",
-                   "#F2F1E6"),
-      n = 5,
-      reverse = TRUE,
-      domain = unique(na.exclude(tractData()$est))
-      
-    )
+    # pal2 <- colorQuantile(
+    #   palette =  c("#685DA9",
+    #                "#CB6F6B", 
+    #                "#EFA96E",  
+    #                "#2A8CC5",
+    #                "#F2F1E6"),
+    #   n = 5,
+    #   reverse = TRUE,
+    #   domain = unique(na.exclude(tractData()$est)))
     
     mapTemp %>%
       leaflet()  %>% 
-      addProviderTiles(providers$CartoDB.Positron) %>%  
+      addProviderTiles(providers$Esri.WorldStreetMap, group = "Street Map") %>%
+      addProviderTiles(providers$Stamen.Terrain, group = "Terrain") %>%
+      addProviderTiles(providers$Esri.WorldImagery, group = "Sattelite") %>%
+      addProviderTiles(providers$Stamen.Toner, group = "B/W") %>% 
+      # addPolygons(
+      #   color = "#444444",
+      #   weight = 1,
+      #   smoothFactor = 0.1,
+      #   fillOpacity = 0.7,
+      #   fillColor = ~ pal2(est),
+      #   highlightOptions = highlightOptions(color = "white", weight = 2,
+      #                                       bringToFront = TRUE),
+      #   popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
+      #                  round(mapTemp$est,1),"%. The county average is ", round(mean(mapTemp$est, na.rm=T),1),
+      #                  "%. The state average is ", round(average(),1), "%."),
+      #   group="State Quintiles") %>%
       addPolygons(
         color = "#444444",
         weight = 1,
         smoothFactor = 0.1,
-        fillOpacity = 0.6,
-        fillColor = ~ pal2(est),
-        highlightOptions = highlightOptions(color = "white", weight = 2,
-                                            bringToFront = TRUE),
-        popup = paste0("This is tract ", mapTemp$ct10, " in ",mapTemp$county," County. The ",mapTemp$def," in this tract is ",
-                       round(mapTemp$est,1),"%. The county average is ", round(mean(mapTemp$est, na.rm=T),1),
-                       "%. The state average is ", round(average(),1), "%."),
-        group="State Quintiles") %>%
-      addPolygons(
-        color = "#444444",
-        weight = 1,
-        smoothFactor = 0.1,
-        fillOpacity = 0.6,
+        fillOpacity = 0.7,
         fillColor = ~ pal(est),
         highlightOptions = highlightOptions(color = "white", weight = 2,
                                             bringToFront = TRUE),
@@ -323,21 +351,22 @@ server <- function(input, output, session) {
                        "%. The state average is ", round(average(),1), "%."),
         group="County Quintiles") %>%
       addLayersControl(
-        baseGroups = c("County Quintiles", "State Quintiles"),
+        baseGroups = c("B/W","Street Map","Terrain","Sattelite"),
+        # overlayGroups = c("County Quintiles", "State Quintiles"),
         options = layersControlOptions(collapsed = FALSE)
       ) %>% 
-      
       addLegend("bottomleft",
                 colors =  c("#685DA9",
                             "#CB6F6B", 
                             "#EFA96E",  
                             "#2A8CC5",
                             "#F2F1E6"),
-                opacity = .4,
+                opacity = 1,
                 title = input$ind,
                 labels = c("Higher than 80% of other tracts (Most Vulnerable)","Higher than 60% of other tracts","Higher than 40% of other tracts","Higher than just 20% of other tracts","Lowest 20% of tracts (Least Vulnerable)")
                 ##lables = c("X%-X% (most vulnerable)","X%-X%","X%-X%","X%-X%","X%-X% (least"%. In this tract, the "mapTemp$def," is higher than "mapTemp),))##
-      )
+      ) %>% 
+      hideGroup("State Quintiles")
     
     
   })
@@ -417,8 +446,8 @@ server <- function(input, output, session) {
     
     plot_ly(
       data = tab2.df,
-      x =  ~ round(Mean, 2),
-      y =  ~ reorder(County, Mean),
+      y =  ~ round(Mean, 2),
+      x =  ~ reorder(County, Mean),
       marker = list(color = tab2.df[["countyColor"]],
                     line = list(color = "#404040", width=.5)
       ),
@@ -431,11 +460,11 @@ server <- function(input, output, session) {
       showlegend = FALSE
     ) %>%
       layout(
-        title = paste0(input$ind, " \n for California Counties \n (",input$cnty," [dark], Climate region [light], CA avg [dotted])"),
+        title = paste0(input$ind, " for California Counties \n (",input$cnty," [dark], Climate region [light], CA avg [dotted])"),
         titlefont=f2,
-        margin = list(l = 130,
-                      t = 105),
-        xaxis = list(
+        margin = list(l = 90,
+                      t = 75),
+        yaxis = list(
           title = ifelse(input$strt == "none", input$ind,paste0(input$ind," - ", input$strt)),
           titlefont=f1,
           autotick = TRUE,
@@ -446,21 +475,22 @@ server <- function(input, output, session) {
           tickwidth = 2,
           tickcolor = toRGB("black")
         ),
-        yaxis = list(title = "Counties",
+        xaxis = list(title = "Counties",
                      titlefont=f1,
                      type = "categorical",
                      dtick=1,
+                     tickangle=315,
                      tickfont=list(
                        size=8
                      )
         ), 
         shapes = list(
           type = "line", 
-          y0 = 0, 
-          y1 = 1, 
-          yref = "paper",
-          x0 = averages$stateAverage[averages$def == input$ind & averages$strata == input$strt], 
-          x1 = averages$stateAverage[averages$def == input$ind & averages$strata == input$strt], 
+          x0 = 0, 
+          x1 = 1, 
+          xref = "paper",
+          y0 = averages$stateAverage[averages$def == input$ind & averages$strata == input$strt], 
+          y1 = averages$stateAverage[averages$def == input$ind & averages$strata == input$strt], 
           line = list(color = "black", dash = "dot"), opacity = .5
         )
       ) %>%
@@ -487,11 +517,28 @@ server <- function(input, output, session) {
   })
   
   
+  
+  exposureData <- eventReactive(input$exposure, {
+    
+    if(input$exposure == "Population living in sea level rise inundation areas"){
+      CHVIdata[est > 0]
+      
+    } else {
+      CHVIdata
+      
+    }
+    
+    
+    
+  })
+  
+  
   ##### make vulnerability table #####
   
   triple <- reactive({
+    req(input$exposure, input$sensitivity)
     
-    foo <- {CHVIdata %>% 
+     foo <- {exposureData() %>% 
         filter(def  == input$exposure & strata %in% c("2070-2099", 2070-2099, "none") & race == "Total") %>%
         mutate(expTer = ntile(est, 3),
                def =  ifelse(strata == "none", def,paste0(def," - ", strata))) %>%
@@ -690,11 +737,13 @@ server <- function(input, output, session) {
   
   data.dnld <- eventReactive(c(input$cntyDNLD, input$indDNLD),{
     
+  holder <- data.table::copy(CHVIdata)
+    
+    
     if(input$cntyDNLD  == "All" & input$indDNLD != "All") {
       
-      CHVIdata %>%
-        mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
-        filter(def == input$indDNLD) %>%
+      holder[def == input$indDNLD] %>% 
+        .[, COUNTYFI_1 := as.character(paste0("0",COUNTYFI_1))] %>%
         rename(
           County = county,
           Region = climReg,
@@ -706,9 +755,8 @@ server <- function(input, output, session) {
           Race = race)
     } else { if(input$cntyDNLD  != "All" & input$indDNLD != "All") {
       
-      CHVIdata %>%
-        mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
-        filter(def == input$indDNLD & county == input$cntyDNLD) %>%
+      holder[def == input$indDNLD  & county == input$cntyDNLD] %>% 
+        .[, COUNTYFI_1 := as.character(paste0("0",COUNTYFI_1))] %>%
         rename(
           County = county,
           Region = climReg,
@@ -720,9 +768,8 @@ server <- function(input, output, session) {
           Race = race)
     } else { if(input$cntyDNLD  != "All" & input$indDNLD == "All") {
       
-      CHVIdata %>%
-        mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
-        filter(county == input$cntyDNLD) %>%
+      holder[county == input$cntyDNLD] %>% 
+        .[, COUNTYFI_1 := as.character(paste0("0",COUNTYFI_1))] %>%
         rename(
           County = county,
           Region = climReg,
@@ -734,8 +781,7 @@ server <- function(input, output, session) {
           Race = race)
     } else {   
       
-      CHVIdata %>%
-        mutate(COUNTYFI_1 = as.character(paste0("0",COUNTYFI_1))) %>%
+      holder[, COUNTYFI_1 := as.character(paste0("0",COUNTYFI_1))] %>%
         rename(
           County = county,
           Region = climReg,
@@ -821,21 +867,59 @@ server <- function(input, output, session) {
   
   ##### Download the County Health Profile Report  ######  
   
-  
-  output$downloadCHPR <- renderUI({ 
-    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cntyCHPR, paste0(input$cntyCHPR," "))],' target="_blank"  onclick="trackOutboundLink("', links$CHPR.Link[links$County %in% c(input$cntyCHPR, paste0(input$cntyCHPR," "))],'"); return false;">Download County Health Profile</a>'))
+ 
+  output$downloadCHPR1 <- renderUI({
+    HTML(
+      paste0(
+        '<a href =',
+        links$CHPR_link[links$County %in% c(input$cnty1, paste0(input$cnty1, " "))],
+        ' target="_blank">Download County Health Profile</a>'
+      )
+    )
   })
   
-  output$downloadCHPR1 <- renderUI({ 
-    HTML(paste0('<a href =', links$CHPR.Link[links$County %in% c(input$cnty1, paste0(input$cnty1," "))],' target="_blank"  onclick="trackOutboundLink("', links$CHPR.Link[links$County %in% c(input$cnty1, paste0(input$cnty1," "))],'"); return false;">Download County Health Profile</a>'))
+  output$downloadNarrative <- renderUI({
+    HTML(
+      paste0(
+        '<a href =',
+        narratives$narrativeLink[narratives$def == input$ind],
+        ' target="_blank"  onclick="trackOutboundLink("',
+        narratives$narrativeLink[narratives$def == input$ind],
+        '"); return false;">Download the Narrative for this Indicator</a>'
+      )
+    )
   })
   
-  output$downloadNarrative <- renderUI({ 
-    HTML(paste0('<a href =', narratives$narrativeLink[narratives$def == input$ind],' target="_blank"  onclick="trackOutboundLink("', narratives$narrativeLink[narratives$def == input$ind],'"); return false;">Download the Narrative for this Indicator</a>'))
+  
+  output$readMore <- renderUI({
+    HTML(
+      paste0(
+        '<h2><a href =',
+        narratives$resourceLink[narratives$def == input$ind],
+        ' target="_blank"  onclick="trackOutboundLink("',
+        narratives$resourceLink[narratives$def == input$ind],
+        '"); return false;">Learn More Here</a></h2>'
+      )
+    )
   })
   
   
-  output$blurb <- renderUI({ 
+  output$VAtext <- renderUI({
+    HTML(
+      paste0(
+        '<h3>What is the climate change challenge?</h3><p>',
+        narratives$challenge[narratives$def == input$ind],
+        '<h3>Why is this climate change impact important to health?</h3><p>',
+        narratives$healthImport[narratives$def == input$ind],
+        '<h3>Who is most impacted?</h3><p>',
+        narratives$vulnerable[narratives$def == input$ind]
+      )
+    )
+  })
+  
+  
+  
+  output$blurb <- renderUI({
     h3(unique(CHVIdata$defHealth[CHVIdata$def == input$ind]))
   })
   
