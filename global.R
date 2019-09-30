@@ -145,7 +145,7 @@ CHVItracts <-
 counties <-
   st_read("counties.geojson", stringsAsFactors = F)  %>% st_transform(crs = 4326)
 tracts <-
-  st_read("tracts.GeoJSON", stringsAsFactors = F) %>% st_transform(crs = 4326) %>%
+  st_read("tractsSM.GeoJSON", stringsAsFactors = F) %>% st_transform(crs = 4326) %>%
   mutate(COUNTYFI_1 = as.character(paste0(STATE, COUNTY)))
 
 # done to fix issue with Leaflet maps not showing in browser
