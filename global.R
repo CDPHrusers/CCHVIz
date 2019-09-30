@@ -1,17 +1,16 @@
+# setwd("//mnt/projects/ohe/CCHVIz")
+# setwd("R://CCHVIz")
 library(shiny)
 library(tidyverse)
+library(plotly)
 library(leaflet)
 library(shinythemes)
+library(data.table)
 library(ggthemes)
 library(sf)
 library(DT)
-library(plotly)
-library(data.table)
 
 
-
-# setwd("//mnt/projects/ohe/CCHVIz")
-# 
 links <- data.frame(
   County = c(
     "Alameda",
@@ -133,7 +132,7 @@ links <- data.frame(
     "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHPRs/CHPR113Yolo_County2-23-17.pdf"         ,
     "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHPRs/CHPR115Yuba_County2-23-17.pdf"
   )
-
+  
 )
 
 
@@ -162,97 +161,113 @@ f2 <- list(family = "Arial, sans-serif",
            size = 14,
            color = "black")
 
-CHVItracts$def <-
-  ifelse(
-    CHVItracts$def == "percent impervious surface cover",
+extras <- data.table(
+  def = c(
+    "Percent of households without air conditioning",
+    "Percent without tree canopy coverage",
+    "Percent of population age less than 5 years",
+    "Number of Violent Crimes per 1,000 Population",
+    "Percent of population with a disability",
+    "Percent of adults with less than college education"   ,
+    "Percent of population aged 65 years or older",
+    "Projected number of extreme heat days 2040-2060",
+    "Projected number of extreme heat days 2080-2099",
     "Percent impervious surface cover",
-    CHVItracts$def
+    "Percent of population without health insurance",
+    "Percent of households with no one aged > 14 years speaking English",
+    "Percent of population employed and aged > 16 working outdoors",
+    "Average Daily Maximum Ozone Concentration",
+    "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
+    "Overall Poverty Rate",
+    "Population living in sea level rise inundation areas",
+    "Percent of households with no vehicle ownership",
+    "Percent of population currently living in very high wildfire risk areas"
+  ),
+  defHealth = c(
+    "Air conditioning (AC) is an important protective factor against heat-related morbidity and mortality.",
+    "Urban greening, such as parks and trees, may have a local cooling effect.",
+    "Children are especially vulnerable because they are rapidly growing, both physically and mentally.",
+    "Safe neighborhoods that are free of crime and violence are an integral component of healthy neighborhoods.",
+    "Those with disabilities face disadvantages with limited resources and capacity during the phases of evacuation, response, and recovery.",
+    "Education is a key pathway to employment, housing, transportation, health insurance, and other basic necessities for a healthy life.",
+    "People aged 65 and older are especially vulnerable to the health impacts of climate change.",
+    "Heat waves are associated with increased hospital admissions for cardiovascular, kidney stones, mental health, diabetes, and respiratory disorders.",
+    "Heat waves are associated with increased hospital admissions for cardiovascular, kidney stones, mental health, diabetes, and respiratory disorders.",
+    "Impervious surfaces retain heat and make urban areas warmer than the surrounding non-urban areas.",
+    "Insurance coverage is a key determinant of timely access and utilization of health services.",
+    "Linguistic isolation may limit understanding of health warnings. Also extreme weather can disrupt the management of chronic conditions for the socially or linguistically isolated.",
+    "Working in an environment that is excessively hot poses a risk factor for heat health effects among persons who work outdoors.",
+    "Climate change is projected to increase cardiovascular and respiratory health impacts associated with ground-level ozone.",
+    "PM2.5 is capable of reaching deep into the lungs and causing a host of diseases.",
+    "Poverty limits the acquisition of basic material necessities and it can impact the ability to live a healthy life.",
+    "Rising sea levels can contaminate drinking water, flood homes and infrastructure, and displace residents and employers. The impacts include toxic exposures, mental and physical trauma, and food insecurity.",
+    "Transportation improves access to evacuation and shelter from climate hazards, such as wildfire, air pollution, heat waves, and flooding.",
+    "Wildfires can lead to injuries and deaths from burns, smoke inhalation, and displacement."
+  ),
+  catjv = c(
+    "adaptive capacity",
+    "adaptive capacity",
+    "sensitivity",
+    "sensitivity",
+    "sensitivity",
+    "sensitivity" ,
+    "sensitivity",
+    "environment",
+    "environment",
+    "adaptive capacity",
+    "sensitivity",
+    "sensitivity",
+    "sensitivity",
+    "environment",
+    "environment",
+    "sensitivity",
+    "environment",
+    "sensitivity",
+    "environment"
+  ),
+  units = c(
+    "%",
+    "%",
+    "%",
+    "Crimes/1,000",
+    "%",
+    "%",
+    "%",
+    "days/yr",
+    "days/yr",
+    "%",
+    "%",
+    "%",
+    "%",
+    "ppm",
+    "µg/m3",
+    "%",
+    "%",
+    "%",
+    "%"
+  ),
+  defShort = c(
+    "% HH w/o AC",
+    "% w/o Tree Canopy",
+    "% under 5",
+    "Violent Crimes/1,000",
+    "% with a Disability",
+    "% w/o college education",
+    "% over 65",
+    "Extreme Heat Days - midcentury",
+    "Extreme Heat Days - end of century",
+    "% Impervious Surface",
+    "% w/o Health Insurance",
+    "% HH w/o English Speaker",
+    "% outdoor workers",
+    "Avg Daily Max O3 Concentration",
+    "Annual Mean PM2.5 Concentration",
+    "% in Poverty",
+    "% in Sea Level Rise Risk Areas",
+    "% HH w/o Vehicle",
+    "% in Very High Wildfire Risk"
   )
-
-CHVIdata$def <-
-  ifelse(
-    CHVIdata$def == "percent impervious surface cover",
-    "Percent impervious surface cover",
-    CHVIdata$def
-  )
-
-
-CHVIdata$strata <-
-  ifelse(
-    CHVIdata$strata == "2085",
-    "2070-2099",
-    ifelse(CHVIdata$strata == "2050",
-           "2035-2064",
-           CHVIdata$strata)
-  )
-
-
-CHVIdata <- merge(x = CHVIdata,
-                  y = {
-                    data.table(
-                      def = c(
-                        "Percent of households without air conditioning",
-                        "Percent without tree canopy coverage",
-                        "Percent of population age less than 5 years",
-                        "Number of Violent Crimes per 1,000 Population",
-                        "Percent of population with a disability",
-                        "Percent of adults with less than college education"   ,
-                        "Percent of population aged 65 years or older",
-                        "Projected number of extreme heat days",
-                        "Percent impervious surface cover",
-                        "Percent of adults aged 18 - 64 without health insurance",
-                        "Percent of households with no one aged > 14 years speaking English",
-                        "Percent of population employed and aged > 16 working outdoors",
-                        "Three-year ozone concentration exceedance",
-                        "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-                        "Overall, concentrated, and child (0 to 18 years of age) poverty rate",
-                        "Population living in sea level rise inundation areas",
-                        "Percent of households with no vehicle ownership",
-                        "Percent of population currently living in very high wildfire risk areas"
-                      ),
-                      defHealth = c(
-                        "Air conditioning (AC) is an important protective factor against heat-related morbidity and mortality.",
-                        "Urban greening, such as parks and trees, may have a local cooling effect.",
-                        "Children are especially vulnerable because they are rapidly growing, both physically and mentally.",
-                        "Safe neighborhoods that are free of crime and violence are an integral component of healthy neighborhoods.",
-                        "Those with disabilities face disadvantages with limited resources and capacity during the phases of evacuation, response, and recovery.",
-                        "Education is a key pathway to employment, housing, transportation, health insurance, and other basic necessities for a healthy life.",
-                        "People aged 65 and older are especially vulnerable to the health impacts of climate change.",
-                        "Heat waves are associated with increased hospital admissions for cardiovascular, kidney stones, mental health, diabetes, and respiratory disorders.",
-                        "Impervious surfaces retain heat and make urban areas warmer than the surrounding non-urban areas.",
-                        "Insurance coverage is a key determinant of timely access and utilization of health services.",
-                        "Linguistic isolation may limit understanding of health warnings. Also extreme weather can disrupt the management of chronic conditions for the socially or linguistically isolated.",
-                        "Working in an environment that is excessively hot poses a risk factor for heat health effects among persons who work outdoors.",
-                        "Climate change is projected to increase cardiovascular and respiratory health impacts associated with ground-level ozone.",
-                        "PM2.5 is capable of reaching deep into the lungs and causing a host of diseases.",
-                        "Poverty limits the acquisition of basic material necessities and it can impact the ability to live a healthy life.",
-                        "Rising sea levels can contaminate drinking water, flood homes and infrastructure, and displace residents and employers. The impacts include toxic exposures, mental and physical trauma, and food insecurity.",
-                        "Transportation improves access to evacuation and shelter from climate hazards, such as wildfire, air pollution, heat waves, and flooding.",
-                        "Wildfires can lead to injuries and deaths from burns, smoke inhalation, and displacement."
-                      ),
-                      defShort = c(
-                        "% HH w/o AC",
-                        "% w/o Tree Canopy",
-                        "% under 5",
-                        "Violent Crimes/1,000",
-                        "% with a Disability",
-                        "% w/o college education",
-                        "% over 65",
-                        "Extreme Heat Days",
-                        "% Impervious Surface",
-                        "% w/o Health Insurance",
-                        "% HH w/o English Speaker",
-                        "% outdoor workers",
-                        "O3 Concentration above Standard",
-                        "Annual Mean PM2.5 Concentration",
-                        "% in Poverty",
-                        "% in Sea Level Rise Risk Areas",
-                        "% HH w/o Vehicle",
-                        " % in Very High Wildfire Risk"
-                      )
-                    )
-                  })
-
+)
 
 narratives <-
   data.frame(
@@ -264,14 +279,15 @@ narratives <-
       "Percent of population with a disability",
       "Percent of adults with less than college education"   ,
       "Percent of population aged 65 years or older",
-      "Projected number of extreme heat days",
+      "Projected number of extreme heat days 2040-2060",
+      "Projected number of extreme heat days 2080-2099",
       "Percent impervious surface cover",
-      "Percent of adults aged 18 - 64 without health insurance",
+      "Percent of population without health insurance",
       "Percent of households with no one aged > 14 years speaking English",
       "Percent of population employed and aged > 16 working outdoors",
-      "Three-year ozone concentration exceedance",
+      "Average Daily Maximum Ozone Concentration",
       "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-      "Overall, concentrated, and child (0 to 18 years of age) poverty rate",
+      "Overall Poverty Rate",
       "Population living in sea level rise inundation areas",
       "Percent of households with no vehicle ownership",
       "Percent of population currently living in very high wildfire risk areas"
@@ -284,6 +300,7 @@ narratives <-
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Disability_Narrative_795_11-16-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Educ_attain_HS_Narrative_Examples4-28-13.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/Elderly_789_Narrative.pdf",
+      "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_ExtremeHeat_Narrative.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_ExtremeHeat_Narrative.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/ImperviousSurfaces_423_Narrative_12-2-2016.pdf",
       "https://www.cdph.ca.gov/Programs/OHE/CDPH%20Document%20Library/CHVIs/BRACE_Insurance_187_Narrative_11-29-2016.pdf",
@@ -305,6 +322,7 @@ narratives <-
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf",
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf#page=7",
       "http://www.phi.org/uploads/application/files/t25ttiwnzfhq9cw5do2b3hllzrc0f9o4hbri8e8yngt1wyfvjd.pdf#page=32",
+      "http://www.phi.org/uploads/application/files/t25ttiwnzfhq9cw5do2b3hllzrc0f9o4hbri8e8yngt1wyfvjd.pdf#page=32",
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf#page=4",
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf#page=3",
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf#page=6",
@@ -315,26 +333,6 @@ narratives <-
       "http://www.phi.org/uploads/application/files/t25ttiwnzfhq9cw5do2b3hllzrc0f9o4hbri8e8yngt1wyfvjd.pdf#page=64",
       "http://opr.ca.gov/docs/20180312-Vulnerable_Communities_Descriptions.pdf#page=16",
       "http://www.phi.org/uploads/application/files/t25ttiwnzfhq9cw5do2b3hllzrc0f9o4hbri8e8yngt1wyfvjd.pdf#page=48"
-    ),
-    cat = c(
-      "adaptive capacity",
-      "adaptive capacity",
-      "sensitivity",
-      "sensitivity",
-      "sensitivity",
-      "sensitivity" ,
-      "sensitivity",
-      "environment",
-      "adaptive capacity",
-      "sensitivity",
-      "sensitivity",
-      "sensitivity",
-      "environment",
-      "environment",
-      "sensitivity",
-      "environment",
-      "sensitivity",
-      "environment"
     ),
     challenge = c(
       # Air Conditioning
@@ -352,7 +350,9 @@ narratives <-
       # elderly
       "Climate change is increasing the severity and frequency of heat waves and extreme weather events which poses a risk to elderly populations. Aging impairs muscle strength, coordination, cognitive ability, immune system, and regulation of body temperature. In addition, the proportion of the elderly population in the United States is increasing and California is one of nine states where most Americans aged 65 years and older reside.",
       # heat
-      "Periods of warmer temperatures and heat waves are expected to increase in frequency, intensity, and duration throughout the 21st century. Warmer temperatures increase the heat inside buildings and the need for cooling in urban areas and intensify existing urban heat islands (a phenomenon in which urban areas are warmer than the surrounding non-urban areas) in areas that are most heavily populated. There will be increases in annual average temperature of up to 5??? F by 2030 and up to 10??? F by the end of the century or sooner, although not every day will be hotter than current averages. Minimum nighttime temperatures are also projected to increase. For example, the 2006 California heat wave brought higher temperatures combined with increased humidity, particularly at nighttime. Increased daytime temperatures, reduced nighttime cooling, and higher air pollution levels associated with urban heat islands can affect human health and exacerbate the impact of heat waves.",
+      "Periods of warmer temperatures and heat waves are expected to increase in frequency, intensity, and duration throughout the 21st century. Warmer temperatures increase the heat inside buildings and the need for cooling in urban areas and intensify existing urban heat islands (a phenomenon in which urban areas are warmer than the surrounding non-urban areas) in areas that are most heavily populated. There will be increases in annual average temperature of up to 5&#176;F by 2030 and up to 10&#176;F by the end of the century or sooner, although not every day will be hotter than current averages. Minimum nighttime temperatures are also projected to increase. For example, the 2006 California heat wave brought higher temperatures combined with increased humidity, particularly at nighttime. Increased daytime temperatures, reduced nighttime cooling, and higher air pollution levels associated with urban heat islands can affect human health and exacerbate the impact of heat waves.",
+      # heat
+      "Periods of warmer temperatures and heat waves are expected to increase in frequency, intensity, and duration throughout the 21st century. Warmer temperatures increase the heat inside buildings and the need for cooling in urban areas and intensify existing urban heat islands (a phenomenon in which urban areas are warmer than the surrounding non-urban areas) in areas that are most heavily populated. There will be increases in annual average temperature of up to 5&#176;F by 2030 and up to 10&#176;F by the end of the century or sooner, although not every day will be hotter than current averages. Minimum nighttime temperatures are also projected to increase. For example, the 2006 California heat wave brought higher temperatures combined with increased humidity, particularly at nighttime. Increased daytime temperatures, reduced nighttime cooling, and higher air pollution levels associated with urban heat islands can affect human health and exacerbate the impact of heat waves.",
       # impervious
       "Impervious surfaces are areas covered by material that impedes the infiltration of water into the soil. Examples of impervious surfaces are buildings, pavements, concrete, and severely compacted soils. Impervious surfaces retain heat and limit absorption of water into the ground, which can lead to the urban heat island effect, a phenomenon in which urban areas are warmer than the surrounding non-urban areas. Measures of impervious surfaces are important for assessing impacts from infrastructure development and built environment on urban temperatures, precipitation runoff, and water quality.",
       # health insurance
@@ -377,7 +377,7 @@ narratives <-
     
     healthImport = c(
       # Air Conditioning
-      "Air conditioning varies greatly by income, the age of the house, and geographic location. Studies have shown that having working AC was the strongest protective factor against death during a heat wave, followed by access to an air-conditioned place for some time. Research specific to California found that a 10 percent increase in AC ownership would reduce heat-related mortality by 1.4 percent per 10???C change in temperature. A similar protective effect was found for the excess risk of hospitalizations.",
+      "Air conditioning varies greatly by income, the age of the house, and geographic location. Studies have shown that having working AC was the strongest protective factor against death during a heat wave, followed by access to an air-conditioned place for some time. Research specific to California found that a 10 percent increase in AC ownership would reduce heat-related mortality by 1.4 percent per 10&#176;C change in temperature. A similar protective effect was found for the excess risk of hospitalizations.",
       #  Tree cover
       "Evidence links tree cover to reducing air pollution from particulate matter, which in turn, reduces heart disease, respiratory illness, and lung cancer. Urban greening, such as parks and trees, may have a local cooling effect through shade and evapotranspiration. Tree canopy creates environments that reduce stress and neighborhood violence. Research has shown a positive effect from a natural, green environment on physical health, mental health, and longevity. Green spaces have also been shown to lessen flood risk and increase community safety, while simultaneously promoting an active lifestyle and physical activity.",
       # Children
@@ -391,7 +391,9 @@ narratives <-
       # elderly
       "Growing evidence suggests that injury, disease, and death are greatest among the elderly during heatwaves. Acute kidney failure, electrolyte imbalance and inflammation were the most common heat related health effects among elderly in the 2006 California heat wave. Side effects of some medications intensified the heat-related conditions in elderly. Elderly have increased risk of other climate impacts as well. For example, elderly with limited mobility can have increased risk of flood-related impacts. During the 2003 Southern California wildfires, respiratory hospital admissions related to wildfire smoke increased 10% among adults 65 years of age and older. Pre-existing health conditions among the elderly can increase susceptibility to more severe consequences of climate-related infectious diseases. Several studies show that elderly are at increased risk of West Nile virus infection with climate change predicted to increase the overall risk of transmission in California. ",
       # heat
-      "Sustained high heat days and heat waves directly affect human health through heat-related illnesses such as heat stroke, heat exhaustion, and dehydration, as well as other illnesses and premature deaths from cardiovascular or respiratory diseases. Heat waves are associated with increased hospital admissions for cardiovascular, kidney (including kidney stones), mental health, diabetes, and respiratory disorders. Extremely stressful climate exposures such as heat waves may lead to adverse birth outcomes including pre-term birth, low-birth weight, stillbirth, and maternal complications. In California, two separate examinations of a statewide heat wave in 2006 showed excess deaths ranging from 6% to 9% daily for each 10???F increase in temperature.",
+      "Sustained high heat days and heat waves directly affect human health through heat-related illnesses such as heat stroke, heat exhaustion, and dehydration, as well as other illnesses and premature deaths from cardiovascular or respiratory diseases. Heat waves are associated with increased hospital admissions for cardiovascular, kidney (including kidney stones), mental health, diabetes, and respiratory disorders. Extremely stressful climate exposures such as heat waves may lead to adverse birth outcomes including pre-term birth, low-birth weight, stillbirth, and maternal complications. In California, two separate examinations of a statewide heat wave in 2006 showed excess deaths ranging from 6% to 9% daily for each 10&#176;F increase in temperature.",
+      # heat
+      "Sustained high heat days and heat waves directly affect human health through heat-related illnesses such as heat stroke, heat exhaustion, and dehydration, as well as other illnesses and premature deaths from cardiovascular or respiratory diseases. Heat waves are associated with increased hospital admissions for cardiovascular, kidney (including kidney stones), mental health, diabetes, and respiratory disorders. Extremely stressful climate exposures such as heat waves may lead to adverse birth outcomes including pre-term birth, low-birth weight, stillbirth, and maternal complications. In California, two separate examinations of a statewide heat wave in 2006 showed excess deaths ranging from 6% to 9% daily for each 10&#176;F increase in temperature.",
       # impervious
       "Increased heat exposure due to increasing temperatures over time and heat waves can lead to adverse health effects. Studies in cities in the United States, Montreal, Barcelona, Hong Kong, and Taiwan found associations between heat-related health effects and impervious surfaces. A New York City study found that extensive urban development has the potential to increase afternoon temperatures.",
       # health insurance
@@ -403,7 +405,7 @@ narratives <-
       # Ozone
       "Climate change is projected to increase cardiovascular and respiratory morbidity and mortality associated with ground-level ozone. Most California residents are currently exposed to levels at or above the current State ozone standard during some parts of the year. Studies have shown that exposure to ozone is associated with decreased lung function, respiratory symptoms, hospitalizations for cardiopulmonary causes, emergency room visits for asthma, and premature death. At higher daily concentrations, ozone increases asthma attacks, hospital admissions, daily mortality, and days of restricted activity and school absences. In California, the Air Resources Board estimated that 630 deaths, 4,200 hospital admissions, and 4.7 million lost school days could be prevented each year if California met its current statewide standard of 0.070 ppm for ozone (8-hour average). ",
       # PM
-      "In California, the Air Resources Board estimated that, given the PM2.5 levels between 2009 and 2011, more than seven thousand deaths could be prevented each year if California met its current statewide PM2.5 standard of 12 ug/m3. Both short-term and long-term exposures to PM2.5 increase the risk of cardiovascular disease and death. Exposure is linked to adverse respiratory outcomes such as chronic obstructive lung disease, hospital and emergency department admissions for asthma, increased respiratory symptoms, altered pulmonary function, and pulmonary inflammation among asthmatic children. Reports have indicated that PM2.5 affects preterm birth, low birth weight, and infant mortality.",
+      "In California, the Air Resources Board estimated that, given the PM2.5 levels between 2009 and 2011, more than seven thousand deaths could be prevented each year if California met its current statewide PM2.5 standard of 12 µg/m3. Both short-term and long-term exposures to PM2.5 increase the risk of cardiovascular disease and death. Exposure is linked to adverse respiratory outcomes such as chronic obstructive lung disease, hospital and emergency department admissions for asthma, increased respiratory symptoms, altered pulmonary function, and pulmonary inflammation among asthmatic children. Reports have indicated that PM2.5 affects preterm birth, low birth weight, and infant mortality.",
       # poverty
       "The disproportionate impacts of climate change on individuals with pre-existing chronic illness and socially disadvantaged groups threaten to greatly exacerbate existing health and social inequities. It has been estimated that 133,250 (6%) of the 2.4 million U.S. deaths in 2000 could be attributed to poverty. For example, the impacts of climate change on higher food cost and food scarcity will magnify current inequalities in food access, food choices, and chronic diseases. The existing disparities in health status, living conditions, and other inequities increase vulnerability of low-income communities to the health impacts of climate change.",
       # SLR
@@ -432,7 +434,10 @@ Houses, schools, workplaces, and older buildings (e.g., in older urban neighborh
       <ul><li>Elderly ages 65 years or older</li><li>Elderly living alone, with limited mobility, who are socially isolated, residents of institutions, or dependent of care</li><li>Elderly women, low socioeconomic status, or of African American race</li><li>Elderly with multiple chronic conditions (e.g., cardiovascular diseases, respiratory illnesses, diabetes) or pre-existing health conditions</li></ul>",
       # heat
       "Populations with the greatest risk of health impacts from extreme heat, due to physical vulnerability and/or lack of resources to prepare or respond to heat, may include: <ul><li>Elderly, particularly elderly over 65 years of age and elderly living alone</li>
-      <li>children, women, infants, and pregnant women</li><li>People with pre-existing chronic health conditions (e.g., respiratory disease, cardiovascular disease, diabetes, cerebrovascular diseases, respiratory diseases, and acute allergies)</li> <li>People who engage in vigorous physical activity including agricultural and outdoor workers, indoor workers, athletes (especially young athletes), military personnel, and outdoor recreationists</li><li>Populations with low socioeconomic status</li><li>Socially or geographically isolated populations</li><li>People with mental or physical disability</li><li>People in cooler areas less acclimatized to heat, with less awareness of ways to reduce exposure, and with housing not designed for warmer conditions</li><li>Residents of urban areas, of the highest floors of apartment buildings, and without air-conditioning</li><li>Some race/ethnic groups, particularlyAfrican Americans</li><li>People taking certain medications related to specific heart or mental health conditions</li></ul>", 
+      <li>children, women, infants, and pregnant women</li><li>People with pre-existing chronic health conditions (e.g., respiratory disease, cardiovascular disease, diabetes, cerebrovascular diseases, respiratory diseases, and acute allergies)</li> <li>People who engage in vigorous physical activity including agricultural and outdoor workers, indoor workers, athletes (especially young athletes), military personnel, and outdoor recreationists</li><li>Populations with low socioeconomic status</li><li>Socially or geographically isolated populations</li><li>People with mental or physical disability</li><li>People in cooler areas less acclimatized to heat, with less awareness of ways to reduce exposure, and with housing not designed for warmer conditions</li><li>Residents of urban areas, of the highest floors of apartment buildings, and without air-conditioning</li><li>Some race/ethnic groups, particularlyAfrican Americans</li><li>People taking certain medications related to specific heart or mental health conditions</li></ul>",
+      # heat
+      "Populations with the greatest risk of health impacts from extreme heat, due to physical vulnerability and/or lack of resources to prepare or respond to heat, may include: <ul><li>Elderly, particularly elderly over 65 years of age and elderly living alone</li>
+      <li>children, women, infants, and pregnant women</li><li>People with pre-existing chronic health conditions (e.g., respiratory disease, cardiovascular disease, diabetes, cerebrovascular diseases, respiratory diseases, and acute allergies)</li> <li>People who engage in vigorous physical activity including agricultural and outdoor workers, indoor workers, athletes (especially young athletes), military personnel, and outdoor recreationists</li><li>Populations with low socioeconomic status</li><li>Socially or geographically isolated populations</li><li>People with mental or physical disability</li><li>People in cooler areas less acclimatized to heat, with less awareness of ways to reduce exposure, and with housing not designed for warmer conditions</li><li>Residents of urban areas, of the highest floors of apartment buildings, and without air-conditioning</li><li>Some race/ethnic groups, particularlyAfrican Americans</li><li>People taking certain medications related to specific heart or mental health conditions</li></ul>",
       # impervious
       "<ul><li>Communities of color are disproportionately represented in densely populated areas with more impervious surfaces which increases their risk of exposure to heat stress.</li><li>Elderly: A study in New York City found a significant positive association between impervious land cover and heat-related deaths among elderly persons.</li></ul>",
       # health insurance
@@ -456,7 +461,88 @@ Houses, schools, workplaces, and older buildings (e.g., in older urban neighborh
     )
   )
 
+
+colorCoder <-
+  data.table(
+    category = c(
+      "adaptive capacity",
+      "adaptive capacity",
+      "adaptive capacity",
+      "adaptive capacity",
+      "adaptive capacity",
+      "environment",
+      "environment",
+      "environment",
+      "environment",
+      "environment",
+      "sensitivity",
+      "sensitivity",
+      "sensitivity",
+      "sensitivity",
+      "sensitivity"
+    ),
+    catcolor = c(
+      "#54278f",
+      "#756bb1",
+      "#9e9ac8",
+      "#cbc9e2",
+      "#f2f0f7",
+      "#08519c",
+      "#3182bd",
+      "#6baed6",
+      "#bdd7e7",
+      "#eff3ff",
+      "#993404",
+      "#d95f0e",
+      "#fe9929",
+      "#fed98e",
+      "#ffffd4"
+    ), 
+    catlevel = c(
+      "level5",
+      "level4",
+      "level3",
+      "level2",
+      "level1",
+      "level5",
+      "level4",
+      "level3",
+      "level2",
+      "level1",
+      "level5",
+      "level4",
+      "level3",
+      "level2",
+      "level1"
+    )
+  )
+
+CHVIdata <- merge(CHVIdata, extras, by = "def")
 CHVIdata <- data.table::copy(CHVIdata)
+
+
+places <- fread("mssa.csv")
+  
+  
+
+CHVItracts <- merge(CHVItracts, extras, by = "def")
+CHVItracts <- merge(CHVItracts, places, by = "COUNTYFI_1")
+CHVItracts <- data.table::copy(CHVItracts)
+
+
+ranks <-
+  CHVIdata[race == "Total" &
+             latest == "Y", .(
+               county,
+               ind_strt,
+               catjv,
+               est,
+               units,
+               rankjv = ntile(est, n = 58),
+               ca_est = mean(est, na.rm = T)
+             ), by = .(defShort, strata)]%>%
+  .[,label := ifelse(strata == "none", defShort, paste0(defShort," - ", strata))]
+
 
 averages <-
   CHVIdata[latest == "Y", mean(est, na.rm = T), by = .(def, ind, strata)][, .(def, ind, strata, stateAverage = V1)]
