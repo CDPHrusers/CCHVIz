@@ -178,7 +178,7 @@ extras <- data.table(
     "Percent of population employed and aged > 16 working outdoors",
     "Average Daily Maximum Ozone Concentration",
     "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-    "Overall Poverty Rate",
+    "Poverty Rate (200% FPL)",
     "Population living in sea level rise inundation areas",
     "Percent of households with no vehicle ownership",
     "Percent of population currently living in very high wildfire risk areas"
@@ -287,7 +287,7 @@ narratives <-
       "Percent of population employed and aged > 16 working outdoors",
       "Average Daily Maximum Ozone Concentration",
       "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-      "Overall Poverty Rate",
+      "Poverty Rate (200% FPL)",
       "Population living in sea level rise inundation areas",
       "Percent of households with no vehicle ownership",
       "Percent of population currently living in very high wildfire risk areas"

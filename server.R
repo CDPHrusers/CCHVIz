@@ -240,6 +240,31 @@ server <- function(input, output, session) {
   
   ##############   begin Single Indicator Tab ##########
   
+  #### generate county selector (chooseCounty) #####
+  # 
+  
+  # observeEvent(input$cnty1,{
+  #   
+  #   updateSelectInput(session, "cnty",
+  #                     label = "Selected County",
+  #                     choices = c(sort(unique(
+  #                       as.character(CHVIdata$county)
+  #                     ))),
+  #                     selected = input$cnty1
+  #   )
+  # })
+  
+  observeEvent(input$cnty1, {
+    output$chooseCounty <- renderUI({
+      selectInput("cnty",
+                  "Selected County", selected = input$cnty1,
+                  c(sort(unique(
+                    as.character(CHVIdata$county)
+                  ))))
+    })
+  })
+
+  
   
   ##### generate strata selection dropdown #####
   

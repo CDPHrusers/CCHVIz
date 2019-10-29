@@ -71,7 +71,7 @@ ui <-  fluidPage(
                  HTML(paste0(
                    "<div style='text-align:center'><span style='color:black; font-family:Arial; font-size:6em;'>
           Welcome to the CCHVIz </span>  <br>
-          <h2>CCHVIz is the interactive data visualization platform for the Climate Change & Health Vulnerability Indicators for California (CCHVIs). It is produced by the CA Department of Public Health\'s <a href = 'https://www.cdph.ca.gov/Programs/OHE/Pages/OfficeHealthEquity.aspx' target = '_blank'>Office of Health Equity</a>.</h2>
+          <h2>CCHVIz is the interactive data visualization platform for the Climate Change & Health Vulnerability Indicators for California (CCHVIs).<br><br>It is produced by the <a href = 'https://www.cdph.ca.gov/Programs/OHE/Pages/CCHEP.aspx' target = '_blank'>Climate Change and Health Equity Program</a> -- <a href='https://www.cdph.ca.gov/Programs/OHE/Pages/CalBRACE.aspx' target='_blank'>CalBRACE Project</a>, part of the California Department of Public Health.</h2>
           <br><hr><br>
 
           <h2>The indicators are organized into <strong><font color='#3182bd'>Environmental Exposures</font></strong>, <strong><font color='#d95f0e'>Population Sensitivity</font></strong>, and <strong><font color='#54278f'>Adaptive Capacity</font></strong> </h2>
@@ -92,7 +92,7 @@ ui <-  fluidPage(
 
               <br><hr><br>
 
-          <h2>Consider exposure and population senstivity together by exploring the '<strong>",tags$a("Vulnerability", onclick="customHref('vulnerability')"),"</strong>\' tab.</h2>
+          <h2>Consider exposure and population sensitivity together by exploring the '<strong>",tags$a("Vulnerability", onclick="customHref('vulnerability')"),"</strong>\' tab.</h2>
            <br>
            <img src = 'vulnerability_screenshot.png' width = '90%'> </img>
            <h2>Many nearby counties share this vulnerability. Regional action on this topic is merited.</h2>
@@ -103,6 +103,13 @@ ui <-  fluidPage(
           <h2>Do more with the data by downloading it from the '<strong>",tags$a("Query the Data", onclick="customHref('query')"),"</strong>\' tab.</h2>
            <br>
            <img src = 'query_screenshot.png' width = '75%'> </img>
+
+
+ <br><hr><br>
+
+          <h2>Finally, get ideas for how to <strong>TAKE ACTION</strong> by looking through the resources under the final tab.</h2>
+
+
 
              <br><hr><br>
 
@@ -198,13 +205,15 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
       
       fluidRow(
         column(2,
-               selectInput("cnty",
-                           "Highlight County",
-                           c(sort(
-                             unique(as.character(CHVIdata$county))
-                           )))),
+               # selectInput("cnty",
+               #             "Highlight County",
+               #             c(sort(
+               #               unique(as.character(CHVIdata$county))
+               #             )))
+               uiOutput("chooseCounty")
+               ),
         
-        column(2,
+        column(2, 
                selectInput(
                  "ind",
                  "Select an Indicator",
@@ -223,7 +232,7 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
                    "Percent of population without health insurance",
                    "Percent of households with no one aged > 14 years speaking English",
                    "Percent of population employed and aged > 16 working outdoors",
-                   "Overall Poverty Rate",
+                   "Poverty Rate (200% FPL)",
                    "Percent of households with no vehicle ownership",
                    # "Percent of households without air conditioning",
                    "Percent without tree canopy coverage",
@@ -247,7 +256,7 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
         #                      "Percent of population without health insurance",
         #                      "Percent of households with no one aged > 14 years speaking English",
         #                      "Percent of population employed and aged > 16 working outdoors",
-        #                      "Overall Poverty Rate",
+        #                      "Poverty Rate (200% FPL)",
         #                      "Percent of households with no vehicle ownership",
         #                      "Percent of households without air conditioning",
         #                      "Percent without tree canopy coverage",
@@ -329,7 +338,7 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
               "Percent of population without health insurance",
               "Percent of households with no one aged > 14 years speaking English",
               "Percent of population employed and aged > 16 working outdoors",
-              "Overall, concentrated, and child (0 to 18 years of age) poverty rate",
+              "Poverty Rate (200% FPL)",
               "Percent of households with no vehicle ownership",
               "Percent of households without air conditioning",
               "Percent without tree canopy coverage",
@@ -392,7 +401,7 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
                    "Percent of population without health insurance",
                    "Percent of households with no one aged > 14 years speaking English",
                    "Percent of population employed and aged > 16 working outdoors",
-                   "Overall Poverty Rate",
+                   "Poverty Rate (200% FPL)",
                    "Percent of households with no vehicle ownership",
                    "Percent of households without air conditioning",
                    "Percent without tree canopy coverage",
@@ -448,7 +457,7 @@ Public health actions – particularly by local health departments with strong c
 
 <hr>
 <h3>Outreach and Engagement</h3><h4>
-The CalBRACE Climate Change and Health Vulnerability Assessment Report can be used to identify the people and places most at risk to the health impacts of climate change. Once these communities are identified, it is important to engage agencies, community groups, and organizations that are inclusive of, represent, and serve these populations and that are interested in reducing health risks. An integrated and cross-sector approach may involve coordination between emergency management, community and neighborhood groups and organizations, businesses, community clinics, health care providers, and other partners. Public health      departments should also integrate information on community resilience into training and educational programs related to climate change preparedness and response.</p><p>
+The CalBRACE Climate Change and Health Vulnerability Assessment Indicators and Reports can be used to identify the people and places most at risk to the health impacts of climate change. Once these communities are identified, it is important to engage agencies, community groups, and organizations that are inclusive of, represent, and serve these populations and that are interested in reducing health risks. An integrated and cross-sector approach may involve coordination between emergency management, community and neighborhood groups and organizations, businesses, community clinics, health care providers, and other partners. Public health      departments should also integrate information on community resilience into training and educational programs related to climate change preparedness and response.</p><p>
 Many local jurisdictions are already engaged in Climate    Action Planning and Sustainable Communities Strategies Planning. </p><p>
 Senate Bill 375 (SB 375) (Steinberg, Chapter 728, Statutes of 2008),also known as \"The Sustainable Communities and      Climate Protection Act of 2008\", affects regional Metropolitan Planning Organizations (MPO) in California. Each MPO has developed a Sustainable Communities Strategy (SCS) Plan to achieve mandated targets for greenhouse gas     emissions reductions to comply with SB 375 and share     members and partnerships with local climate change collaboratives.</p><p>
 Under Senate Bill 1000, (SB1000) (Leva, Chapter 587, Statutes of 2018)also known as “The Planning for Healthy Communities Act”, cities and counties are required to adopt an Environmental Justice element, or integrate EJ-related policies, objectives, and goals throughout other elements of their General Plan. The bill also includes a process for communities to become meaningfully involved in the decision-making processes that govern land use planning in their neighborhoods.</p><p>
