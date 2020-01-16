@@ -19,15 +19,65 @@ server <- function(input, output, session) {
   CHVIdata <- data.table::copy(CHVIdata)
   
   
+  ######## selection map  ######### 
+  
+  rv <- reactiveValues(selectedCounty = NULL)
+  
+  observeEvent(input$cmap_selected, {
+    rv$selectedCounty <- ifelse(is.null(input$cmap_selected), "Alameda", input$cmap_selected)
+  })
+  
+  
+  
+  output$cmap <- renderggiraph({
+    
+      gg <- ggplot(data = counties) +
+        geom_sf() +
+        geom_sf_interactive(aes(
+          tooltip = NAME_1,
+          data_id = NAME_1
+        ),
+        size = 0.5) +
+        # scale_fill_gradient2(
+        #   low = "white",
+        #   mid = "grey60",
+        #   high = "grey30",
+        #   na.value = "black"
+        # ) +
+        theme(
+          axis.line = element_blank(),
+          axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          legend.position = "none",
+          panel.background = element_blank(),
+          panel.border = element_blank(),
+          panel.grid.major = element_line(colour = "transparent"),
+          panel.grid.minor = element_blank(),
+          plot.background = element_blank()
+        )
+      
+      ggiraph(code = print(gg),
+              selection_type = "single",
+              hover_css = "cursor:pointer; fill:gray; stroke:black;")
+    
+  })
+  
+  
+  
+  
+  
   
   ##############   begin County Snapshot Tab ##########
   
   
   #####  reactive table (tab 1 - single county) #####
   
-  data.tab1 <- eventReactive(input$cnty1,{
+  data.tab1 <- eventReactive(rv$selectedCounty,{
     
-    CHVIdata[county == input$cnty1 &  race == "Total" & latest == "Y" & strata %in% c( "physical","mental","total", "2040-2060",  "2080-2099",  "population-weighted", "All Non-English","none","Overall","ViolentCrime")] %>% 
+    CHVIdata[county == rv$selectedCounty &  race == "Total" & latest == "Y" & strata %in% c( "physical","mental","total", "2040-2060",  "2080-2099",  "population-weighted", "All Non-English","none","Overall","ViolentCrime")] %>% 
       merge(averages, c("def","ind","strata")) %>% 
       rename(County = county, 
              Region = climReg, 
@@ -67,7 +117,7 @@ server <- function(input, output, session) {
   # 
   # output$test <- renderDataTable({
   #   
-  #   foo <- input$cntyDNLD
+  #   foo <- rv$selectedCountyDNLD
   #   
   #   CHVIdata})
   # output$test2 <- renderDataTable(triple())
@@ -201,35 +251,35 @@ server <- function(input, output, session) {
   
   output$topindicators <- renderUI({
     HTML(
-      paste0("<h3>Top Indicators for ",input$cnty1," County</h3>
+      paste0("<h3>Top Indicators for ",rv$selectedCounty," County</h3>
         <h2><font color='#3182bd'>Environmental Exposures</font></h2>
         <h3>",
-             {ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, label]},
-             "</h3><h5>",round({ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, est]}, digits = 2),{ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
+             {ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, label]},
+             "</h3><h5>",round({ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, est]}, digits = 2),{ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
         <h3>",
-             {ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, label]},
-             "</h3><h5>",round({ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="environment" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, units]},"</h5>",
+             {ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, label]},
+             "</h3><h5>",round({ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="environment" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, units]},"</h5>",
              
           
              "<h2><font color='#d95f0e'>Population Sensitivity</font></h2> 
               <h3>",
-             {ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, label]},
-             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, est]},2),{ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
+             {ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, label]},
+             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, est]},2),{ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
         <h3>",
-             {ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, label]},
-             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, units]},"</h5>
+             {ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, label]},
+             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, units]},"</h5>
              <h3>",
-             {ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[3, label]},
-             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[3, est]},2),{ranks[catjv =="sensitivity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[3, units]},"</h5>
+             {ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[3, label]},
+             "</h3><h5>",round({ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[3, est]},2),{ranks[catjv =="sensitivity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[3, units]},"</h5>
              
              
              <h2><font color='#54278f'>Adaptive Capacity</font></h2>
              <h3>",
-             {ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, label]},
-             "</h3><h5>",round({ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, est]},2),{ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
+             {ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, label]},
+             "</h3><h5>",round({ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, est]},2),{ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[1, units]},"</h5>
         <h3>",
-             {ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, label]},
-             "</h3><h5>",round({ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="adaptive capacity" & county == input$cnty1] %>% setorder(-rankjv) %>% .[2, units]},"</h5>"
+             {ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, label]},
+             "</h3><h5>",round({ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, est]},2),{ranks[catjv =="adaptive capacity" & county == rv$selectedCounty] %>% setorder(-rankjv) %>% .[2, units]},"</h5>"
       )
     )
   })
@@ -243,21 +293,21 @@ server <- function(input, output, session) {
   #### generate county selector (chooseCounty) #####
   # 
   
-  # observeEvent(input$cnty1,{
+  # observeEvent(rv$selectedCounty,{
   #   
   #   updateSelectInput(session, "cnty",
   #                     label = "Selected County",
   #                     choices = c(sort(unique(
   #                       as.character(CHVIdata$county)
   #                     ))),
-  #                     selected = input$cnty1
+  #                     selected = rv$selectedCounty
   #   )
   # })
   
-  observeEvent(input$cnty1, {
+  observeEvent(rv$selectedCounty, {
     output$chooseCounty <- renderUI({
       selectInput("cnty",
-                  "Selected County", selected = input$cnty1,
+                  "Selected County", selected = rv$selectedCounty,
                   c(sort(unique(
                     as.character(CHVIdata$county)
                   ))))
@@ -298,17 +348,17 @@ server <- function(input, output, session) {
         Denominator = denmntr
       ) %>%
       mutate(
-        selCounty = ifelse(County == input$cnty, "yes", "no"),
+        selCounty = ifelse(County == rv$selectedCounty, "yes", "no"),
         selRegion = ifelse(
-          Region == CHVIdata$climReg[CHVIdata$county == input$cnty][1],
-          paste0("In ", CHVIdata$climReg[CHVIdata$county == input$cnty][1], " region"),
+          Region == CHVIdata$climReg[CHVIdata$county == rv$selectedCounty][1],
+          paste0("In ", CHVIdata$climReg[CHVIdata$county == rv$selectedCounty][1], " region"),
           "Outside region"
         ),
         countyColor = ifelse(
-          County == input$cnty,
+          County == rv$selectedCounty,
           "rgba(99,99,99, 1)",
           ifelse(
-            Region == CHVIdata$climReg[CHVIdata$county == input$cnty][1],
+            Region == CHVIdata$climReg[CHVIdata$county == rv$selectedCounty][1],
             "rgba(189,189,189, 0.6)",
             "rgba(240,240,240, 0.3)"
           )
@@ -404,12 +454,12 @@ server <- function(input, output, session) {
   })
   
   
-  selectedFIPS <- eventReactive(input$cnty, {
+  selectedFIPS <- eventReactive(rv$selectedCounty, {
     
     
     # as.character(paste0(CHVIdata$COUNTYFI_1[CHVIdata$county == "Alameda"][1]))
     
-    as.character(paste0(CHVIdata$COUNTYFI_1[CHVIdata$county == input$cnty][1]))
+    as.character(paste0(CHVIdata$COUNTYFI_1[CHVIdata$county == rv$selectedCounty][1]))
     
   })
   
@@ -522,7 +572,7 @@ server <- function(input, output, session) {
     content = function(file) {
       write.csv({
         tractData() %>%
-          filter(county == input$cnty)
+          filter(county == rv$selectedCounty)
       }, file, row.names = F)
     }
     
@@ -552,7 +602,7 @@ server <- function(input, output, session) {
       showlegend = FALSE
     ) %>%
       layout(
-        title = paste0(input$ind, " for California Counties \n (",input$cnty," [dark grey], Climate region [grey], CA avg [dotted line])"),
+        title = paste0(input$ind, " for California Counties \n (",rv$selectedCounty," [dark grey], Climate region [grey], CA avg [dotted line])"),
         titlefont=f2,
         margin = list(l = 90,
                       t = 75),
@@ -610,14 +660,14 @@ server <- function(input, output, session) {
   
   ##### generate race data (tab 2 - single indicator) #####
   
-  race_data <- eventReactive(c(input$ind, input$strt, input$cnty),
+  race_data <- eventReactive(c(input$ind, input$strt, rv$selectedCounty),
                              {
                                
                                req(input$ind, input$strt)
                                
                                CHVIdata[def == input$ind &
                                           strata == input$strt &
-                                          county == input$cnty & latest == "Y"] %>%
+                                          county == rv$selectedCounty & latest == "Y"] %>%
                                  mutate(race = ifelse(race == "Total", "County Average", race),
                                         category = catjv)
                                
@@ -651,7 +701,7 @@ server <- function(input, output, session) {
              marker = list(color = foo[["catcolor"]],
                            line = list(color = "#404040", width=.5))) %>%
       layout(
-        title = paste0(foo$defShort[foo$def == input$ind], " within each race/ethnicity \n  in ",input$cnty," County"),
+        title = paste0(foo$defShort[foo$def == input$ind], " within each race/ethnicity \n  in ",rv$selectedCounty," County"),
         titlefont=f2,
         margin = list(l = 90,
                       t = 75),
@@ -701,11 +751,11 @@ server <- function(input, output, session) {
   
  ############## generate place list names  ##################
   
-  placeNames <- eventReactive(c(input$ind, input$strt,  input$cnty),{
+  placeNames <- eventReactive(c(input$ind, input$strt,  rv$selectedCounty),{
     
-  req(input$ind, input$strt,  input$cnty)
+  req(input$ind, input$strt,  rv$selectedCounty)
     
-    CHVItracts[def == input$ind & strata == input$strt & county == input$cnty & latest == "Y", .(value = round(mean(est), 2)), by=.(Place)] %>% setorder(-value)
+    CHVItracts[def == input$ind & strata == input$strt & county == rv$selectedCounty & latest == "Y", .(value = round(mean(est), 2)), by=.(Place)] %>% setorder(-value)
     
   })
   
@@ -826,7 +876,7 @@ server <- function(input, output, session) {
 
 
   
-  # vulnRegion <- reactive({unique(CHVIdata$climReg[CHVIdata$county == input$cnty1])})  
+  # vulnRegion <- reactive({unique(CHVIdata$climReg[CHVIdata$county == rv$selectedCounty])})  
   # 
   # 
   # triple <- reactive({
@@ -1223,7 +1273,7 @@ server <- function(input, output, session) {
     HTML(
       paste0(
         '<a href =',
-        links$CHPR_link[links$County %in% c(input$cnty1, paste0(input$cnty1, " "))],
+        links$CHPR_link[links$County %in% c(rv$selectedCounty, paste0(rv$selectedCounty, " "))],
         ' target="_blank">Download County Health Profile</a>'
       )
     )
@@ -1272,11 +1322,11 @@ server <- function(input, output, session) {
   output$snapshottext <- renderUI({
     HTML(
       paste0("<h3>",
-        input$cnty1,
+        rv$selectedCounty,
         " County faces climate change exposures that pose considerable health risks to the population, especially to a number of vulnerable groups. </h3>
         <h2><font color='#3182bd'>Environmental Exposures</font></h2>
         <p>More frequent extreme weather patterns will pose a hazard to ",
-        input$cnty1,
+        rv$selectedCounty,
         " County's population health. If greenhouse gas emissions continue to grow as they have in the past, the number of <strong>extreme heat days</strong> over ",
         round(data.tab1()$numratr[data.tab1()$ind_strt == 'heat_2040-2060']*9/5+32, 1),
         "&#176;F are expected to be ",
@@ -1284,7 +1334,7 @@ server <- function(input, output, session) {
         " days per year in 2040-2060 and ",
         round(data.tab1()$County_Value[data.tab1()$ind_strt == 'heat_2080-2099'], 0),
         " days  per year in 2080-2099. Higher temperatures can also increase hazardous air pollution. In 2012-2014, ",
-        input$cnty1,
+        rv$selectedCounty,
         " County's average maximum <strong>ozone</strong> concentration was ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'ozone'], 3),
         " ppm and average <strong>fine particulate matter</strong> (PM2.5) was ",
@@ -1302,12 +1352,12 @@ server <- function(input, output, session) {
                big.mark = ",",
                scientific = FALSE),
         " residents) of the ",
-        input$cnty1,
+        rv$selectedCounty,
         " County population lived in very high wildfire risk areas in 2010 (statewide average was ",
         round(data.tab1()$CA_avg[data.tab1()$ind == 'wildfire'], 0),
         "%).</p>
         <h2><font color='#d95f0e'>Population Sensitivity</font></h2> <p>Certain populations will experience the health impacts of climate change earlier, more often, or more severely, such as <strong>children and elderly</strong>, and those with disabilities. In 2011-2015, ",
-        input$cnty1,
+        rv$selectedCounty,
         " County's population included ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'children'], 1),
         "% children (",
@@ -1332,8 +1382,8 @@ server <- function(input, output, session) {
                big.mark = ",",
                scientific = FALSE),
         " people) of ",
-        input$cnty1,
-        " County's population reported having <strong>physical disabilities</strong> (statewide average was 6%). In 2011-2015, ",         input$cnty1,         " County's population included ",
+        rv$selectedCounty,
+        " County's population reported having <strong>physical disabilities</strong> (statewide average was 6%). In 2011-2015, ",         rv$selectedCounty,         " County's population included ",
         round(data.tab1()$County_Value[data.tab1()$ind_strt == 'disability_mental'], 1),
         "% (",
         format(round(data.tab1()$numratr[data.tab1()$ind_strt == 'disability_mental'], 0),
@@ -1347,14 +1397,14 @@ server <- function(input, output, session) {
                big.mark = ",",
                scientific = FALSE),
         " households), where no one aged 14 or older spoke English (statewide average was 9.5%). </p><p>
-        Climate change and its impacts add to the cumulative stresses already experienced by populations without adequate financial resources, those living in communities with high incidence of violence, or who have limited access to supports like higher education, insurance or personal transportation. In ",         input$cnty1,         " County, ",
+        Climate change and its impacts add to the cumulative stresses already experienced by populations without adequate financial resources, those living in communities with high incidence of violence, or who have limited access to supports like higher education, insurance or personal transportation. In ",         rv$selectedCounty,         " County, ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'poverty'], 0),
         "% (",
         format(round(data.tab1()$numratr[data.tab1()$ind == 'poverty'], 0),
                big.mark = ",",
                scientific = FALSE),
         " residents) of the <strong>population was living below 200% of the poverty level</strong> in 2011-2015 (statewide average was 36%).
-        ",         input$cnty1,         " County's <strong>violent crime rate</strong> in 2013 was ",
+        ",         rv$selectedCounty,         " County's <strong>violent crime rate</strong> in 2013 was ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'crime'], 1),
         " per 100,000 persons (statewide average was 4.0 per 100,000).
         In 2011-2015, ",
@@ -1363,7 +1413,7 @@ server <- function(input, output, session) {
         format(round(data.tab1()$numratr[data.tab1()$ind == 'education'], 0),
                big.mark = ",",
                scientific = FALSE),
-        " residents) in ",         input$cnty1,         " County aged 25 years or older had an <strong>educational attainment</strong> of less than a four-year college degree (statewide average was 68.7%).
+        " residents) in ",         rv$selectedCounty,         " County aged 25 years or older had an <strong>educational attainment</strong> of less than a four-year college degree (statewide average was 68.7%).
         In 2011-2015 ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'insurance'], 0),
         "% of the population (",
@@ -1383,10 +1433,10 @@ server <- function(input, output, session) {
         format(round(data.tab1()$numratr[data.tab1()$ind == 'outdoor'], 0),
                big.mark = ",",
                scientific = FALSE),
-        " workers) of ",         input$cnty1,         " County's  labor force <strong>worked outdoors</strong> in 2011-2015, and face an elevated risk to heat's effects on health (statewide average was 6.4%).</p>
+        " workers) of ",         rv$selectedCounty,         " County's  labor force <strong>worked outdoors</strong> in 2011-2015, and face an elevated risk to heat's effects on health (statewide average was 6.4%).</p>
 <h2><font color='#54278f'>Adaptive Capacity</font></h2>
 <p>Adaptive capacity is important for responding to the impacts of climate change. Expanses of concrete and asphalt (<strong>impervious surfaces</strong>) make hot summers even hotter, while parks and trees can help make future heat waves more bearable. 
-In the portions of ",         input$cnty1,         " County where people resided in 2011, the land was about ",
+In the portions of ",         rv$selectedCounty,         " County where people resided in 2011, the land was about ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'impervious'], 0),
         "% impervious surfaces and ",
         round(data.tab1()$County_Value[data.tab1()$ind == 'canopy'], 0),
@@ -1397,8 +1447,8 @@ Access to public transit and <strong>air conditioning</strong> helps people relo
         format(round(data.tab1()$numratr[data.tab1()$ind == 'ac'], 0),
                big.mark = ",",
                scientific = FALSE),
-        " households) of households in ",         input$cnty1,         " County did not have air conditioning (statewide average was 36%). 
-These findings highlight the aspects of vulnerability and the populations in ",         input$cnty1,         " County most susceptible to health risks from current and future climate change exposures. Responding to and preparing for a changing climate presents opportunities for local health departments and partners to consider policies, actions, and infrastructure design that will not just protect the public, but also promote health equity, resiliency, and sustainability.
+        " households) of households in ",         rv$selectedCounty,         " County did not have air conditioning (statewide average was 36%). 
+These findings highlight the aspects of vulnerability and the populations in ",         rv$selectedCounty,         " County most susceptible to health risks from current and future climate change exposures. Responding to and preparing for a changing climate presents opportunities for local health departments and partners to consider policies, actions, and infrastructure design that will not just protect the public, but also promote health equity, resiliency, and sustainability.
 "
       )
     )
@@ -1413,15 +1463,16 @@ These findings highlight the aspects of vulnerability and the populations in ", 
   
   # output$downloadCHPR2 <- downloadHandler(
   #   filename = function () {
-  #     paste0(input$cnty,"CountyHealthProfileReport.pdf")
+  #     paste0(rv$selectedCounty,"CountyHealthProfileReport.pdf")
   #   },
   # 
   #   content = function(file) {
-  #     file.copy(links$CHPR.Link[links$County %in% c(input$cnty, paste0(input$cnty," "))], file)
+  #     file.copy(links$CHPR.Link[links$County %in% c(rv$selectedCounty, paste0(rv$selectedCounty," "))], file)
   #   }
   # 
   # )
   
   outputOptions(output, "map", suspendWhenHidden = FALSE)
+  outputOptions(output, "cmap", suspendWhenHidden = FALSE)
   
 }

@@ -9,7 +9,7 @@ library(data.table)
 library(ggthemes)
 library(sf)
 library(DT)
-
+library(ggiraph)
 
 links <- data.frame(
   County = c(

@@ -1,8 +1,4 @@
 
-
-
-
-
 ##### Define UI for application that draws a histogram #####
 ui <-  fluidPage(
   div(style = "background-color:#FEFEFE;padding: 1px 0px;height: 0px",
@@ -14,8 +10,7 @@ ui <-  fluidPage(
   navbarPage(
     position = "fixed-top",
     header = tags$head(
-      
-      tags$script("src"="func.js"),
+      tags$script("src" = "func.js"),
       ######## Google Analytics Script Start ###############
       HTML(
         "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-8317364-4'></script>"
@@ -63,36 +58,59 @@ ui <-  fluidPage(
     
     
     
-    tabPanel("Home",value = "home",
-             # fluidRow(includeMarkdown("about.md"), hr()),
-             fluidRow(
-               column(2, ""),
+    tabPanel(
+      "Home",
+      value = "home",
+      # fluidRow(includeMarkdown("about.md"), hr()),
+      fluidRow(column(2, " "),
+               column(8, HTML(
+                 paste0(
+                   "<div style='text-align:center'><span style='color:black; font-family:Arial; font-size:6em;'>Welcome to the CCHVIz </span>  <br></div>"
+                 )
+               )),
+               column(2, " ")),
+      fluidRow(column(2, ""),
+        column(4,
+               HTML(
+                 paste0(
+                   "<div style='text-align:center'>
+          <h2>CCHVIz is the interactive data visualization platform for the Climate Change & Health Vulnerability Indicators for California (CCHVIs).<br><br>It is produced by the <a href = 'https://www.cdph.ca.gov/Programs/OHE/Pages/CCHEP.aspx' target = '_blank'>Climate Change and Health Equity Program</a> -- <a href='https://www.cdph.ca.gov/Programs/OHE/Pages/CalBRACE.aspx' target='_blank'>CalBRACE Project</a>, part of the California Department of Public Health.</h2></div>"
+                 )
+               )),
+        column(4, ggiraphOutput("cmap", height = "400px"),
+               HTML("<div style='text-align:center'><h6>Please Choose a County</h6></div>")),
+        column(2, "")
+      ),
+      fluidRow(column(2, ""),
                column(8,
-                 HTML(paste0(
-                   "<div style='text-align:center'><span style='color:black; font-family:Arial; font-size:6em;'>
-          Welcome to the CCHVIz </span>  <br>
-          <h2>CCHVIz is the interactive data visualization platform for the Climate Change & Health Vulnerability Indicators for California (CCHVIs).<br><br>It is produced by the <a href = 'https://www.cdph.ca.gov/Programs/OHE/Pages/CCHEP.aspx' target = '_blank'>Climate Change and Health Equity Program</a> -- <a href='https://www.cdph.ca.gov/Programs/OHE/Pages/CalBRACE.aspx' target='_blank'>CalBRACE Project</a>, part of the California Department of Public Health.</h2>
-          <br><hr><br>
-
-          <h2>The indicators are organized into <strong><font color='#3182bd'>Environmental Exposures</font></strong>, <strong><font color='#d95f0e'>Population Sensitivity</font></strong>, and <strong><font color='#54278f'>Adaptive Capacity</font></strong> </h2>
+                      HTML(
+                        paste0(
+                          " <br><hr><br> 
+                          <div style='text-align:center'><h2>The indicators are organized into <strong><font color='#3182bd'>Environmental Exposures</font></strong>, <strong><font color='#d95f0e'>Population Sensitivity</font></strong>, and <strong><font color='#54278f'>Adaptive Capacity</font></strong> </h2>
              <br>
           <img src = 'chviTable.png' width = '75%'> </img>
            <br><hr><br>
 
-          <h2>Start with the \'<strong>",tags$a(onclick="customHref('county_snapshot')","County Snapshot"),"</strong>\' to find out which indicators are of greatest concern for you.</h2>
+          <h2>Start with the \'<strong>",
+                          tags$a(onclick = "customHref('county_snapshot')", "County Snapshot"),
+                          "</strong>\' to find out which indicators are of greatest concern for you.</h2>
            <br>
            <img src = 'snapshot_screenshot.png' width = '75%'> </img>
            <h2>It looks like older adults and wildfire are among the chief concerns for this county. </h2>
 
             <br><hr><br>
 
-          <h2>Next examine specific indicators in detail for your County on the \'<strong>",tags$a("Single Indicator", onclick="customHref('single_indicator')"),"</strong>\' tab.</h2>
+          <h2>Next examine specific indicators in detail for your County on the \'<strong>",
+                          tags$a("Single Indicator", onclick = "customHref('single_indicator')"),
+                          "</strong>\' tab.</h2>
            <br>
            <img src = 'indicator_screenshot.png' width = '75%'> </img>
 
               <br><hr><br>
 
-          <h2>Consider exposure and population sensitivity together by exploring the '<strong>",tags$a("Vulnerability", onclick="customHref('vulnerability')"),"</strong>\' tab.</h2>
+          <h2>Consider exposure and population sensitivity together by exploring the '<strong>",
+                          tags$a("Vulnerability", onclick = "customHref('vulnerability')"),
+                          "</strong>\' tab.</h2>
            <br>
            <img src = 'vulnerability_screenshot.png' width = '90%'> </img>
            <h2>Many nearby counties share this vulnerability. Regional action on this topic is merited.</h2>
@@ -100,7 +118,9 @@ ui <-  fluidPage(
 
             <br><hr><br>
 
-          <h2>Do more with the data by downloading it from the '<strong>",tags$a("Query the Data", onclick="customHref('query')"),"</strong>\' tab.</h2>
+          <h2>Do more with the data by downloading it from the '<strong>",
+                          tags$a("Query the Data", onclick = "customHref('query')"),
+                          "</strong>\' tab.</h2>
            <br>
            <img src = 'query_screenshot.png' width = '75%'> </img>
 
@@ -124,41 +144,12 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
 
 
           </div>"
-                   
-                   
-                   
-                   
-                   
-                 ))
+                        )  
+                      )
                ),
-               column(2, "")
-               
-               # column(5, includeMarkdown("about2.md")),
-               # # column(7,  box(
-               # #   title = "Indicator List",
-               # #   width = 12,
-               # #   HTML(
-               # #     "<img src = 'chviTable.png' width = '100%'> </img>"
-               # #   )
-               # # ))
-               #
-               # column(
-               #   6,
-               #   br(),
-               #   br(),
-               #   img(
-               #     class = "img-polaroid",
-               #     src = "chviTable.png",
-               #     alt = "Table of the Indicators",
-               #     width = "100%"
-               #   )
-               # ),
-               # column(1, "")
-               
-               
-               
-               
-             )),
+               column(2, ""))
+      
+    ),
     
     
     tabPanel(
@@ -171,11 +162,11 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
       fluidRow(column(8, includeMarkdown("countyPlot.md")),
                column(
                  2,
-                 selectInput("cnty1",
-                             "Select a County",
-                             c(sort(
-                               unique(as.character(CHVIdata$county))
-                             ))),
+                 # selectInput("cnty1",
+                 #             "Select a County",
+                 #             c(sort(
+                 #               unique(as.character(CHVIdata$county))
+                 #             ))),
                  p(uiOutput("downloadCHPR1"))
                )),
       fluidRow(column(
@@ -196,255 +187,258 @@ If you have questions, comments, or ideas for the site, please do not hesitate t
       wellPanel(DT::dataTableOutput("countyTable"))
       
     ),
-    
-    #####  Select an Indicator Tool  #####
-    
-    
-    tabPanel(
-      "Single Indicator",value = "single_indicator",
       
-      fluidRow(
-        column(2,
-               # selectInput("cnty",
-               #             "Highlight County",
-               #             c(sort(
-               #               unique(as.character(CHVIdata$county))
-               #             )))
-               uiOutput("chooseCounty")
-               ),
-        
-        column(2, 
-               selectInput(
-                 "ind",
-                 "Select an Indicator",
-                 c(
-                   "Percent of population aged 65 years or older",
-                   "Percent of population age less than 5 years",
-                   "Percent of population with a disability",
-                   "Projected number of extreme heat days 2040-2060",
-                   "Projected number of extreme heat days 2080-2099",
-                   "Average Daily Maximum Ozone Concentration",
-                   "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-                   "Population living in sea level rise inundation areas",
-                   "Percent of population currently living in very high wildfire risk areas",
-                   "Number of Violent Crimes per 1,000 Population",
-                   "Percent of adults with less than college education" ,
-                   "Percent of population without health insurance",
-                   "Percent of households with no one aged > 14 years speaking English",
-                   "Percent of population employed and aged > 16 working outdoors",
-                   "Poverty Rate (200% FPL)",
-                   "Percent of households with no vehicle ownership",
-                   # "Percent of households without air conditioning",
-                   "Percent without tree canopy coverage",
-                   "Percent impervious surface cover"
-                 )
-               )),
-        
-        # column(2,
-        #        selectInput("ind",
-        #                    "Select an Indicator",
-        #                    c("Projected number of extreme heat days 2040-2060",                                                 "Projected number of extreme heat days 2080-2099",
-        #                      "Average Daily Maximum Ozone Concentration",
-        #                      "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-        #                      "Population living in sea level rise inundation areas",
-        #                      "Percent of population currently living in very high wildfire risk areas",
-        #                      "Percent of population aged 65 years or older",
-        #                      "Percent of population age less than 5 years",
-        #                      "Number of Violent Crimes per 1,000 Population",
-        #                      "Percent of population with a disability",
-        #                      "Percent of adults with less than college education" ,
-        #                      "Percent of population without health insurance",
-        #                      "Percent of households with no one aged > 14 years speaking English",
-        #                      "Percent of population employed and aged > 16 working outdoors",
-        #                      "Poverty Rate (200% FPL)",
-        #                      "Percent of households with no vehicle ownership",
-        #                      "Percent of households without air conditioning",
-        #                      "Percent without tree canopy coverage",
-        #                      "Percent impervious surface cover"
-        #                    ))),
-        column(2,
-               uiOutput("chooseStrata")),
-        column(6,
-               p(uiOutput("blurb")),
-               p(uiOutput(
-                 "downloadNarrative"
-               )))
-        
-        
-      ),
+      #####  Select an Indicator Tool  #####
       
-      fluidRow(column(
-        7,
-        wellPanel(
-          HTML("<h3>County Map</h3>"),
-          leafletOutput("map", height = "700px"),
-          downloadLink(outputId = "downloadSingleIndicatorMap", label = "Download the data in this Map")
+      
+      tabPanel(
+        "Single Indicator",
+        value = "single_indicator",
+        
+        fluidRow(
+          column(2,""),
+                 # selectInput("cnty",
+                 #             "Highlight County",
+                 #             c(sort(
+                 #               unique(as.character(CHVIdata$county))
+                 #             )))
+                 # uiOutput("chooseCounty")),
+          
+          column(2,
+                 selectInput(
+                   "ind",
+                   "Select an Indicator",
+                   c(
+                     "Percent of population aged 65 years or older",
+                     "Percent of population age less than 5 years",
+                     "Percent of population with a disability",
+                     "Projected number of extreme heat days 2040-2060",
+                     "Projected number of extreme heat days 2080-2099",
+                     "Average Daily Maximum Ozone Concentration",
+                     "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
+                     "Population living in sea level rise inundation areas",
+                     "Percent of population currently living in very high wildfire risk areas",
+                     "Number of Violent Crimes per 1,000 Population",
+                     "Percent of adults with less than college education" ,
+                     "Percent of population without health insurance",
+                     "Percent of households with no one aged > 14 years speaking English",
+                     "Percent of population employed and aged > 16 working outdoors",
+                     "Poverty Rate (200% FPL)",
+                     "Percent of households with no vehicle ownership",
+                     # "Percent of households without air conditioning",
+                     "Percent without tree canopy coverage",
+                     "Percent impervious surface cover"
+                   )
+                 )),
+          
+          # column(2,
+          #        selectInput("ind",
+          #                    "Select an Indicator",
+          #                    c("Projected number of extreme heat days 2040-2060",
+          #                      "Projected number of extreme heat days 2080-2099",
+          #                      "Average Daily Maximum Ozone Concentration",
+          #                      "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
+          #                      "Population living in sea level rise inundation areas",
+          #                      "Percent of population currently living in very high wildfire risk areas",
+          #                      "Percent of population aged 65 years or older",
+          #                      "Percent of population age less than 5 years",
+          #                      "Number of Violent Crimes per 1,000 Population",
+          #                      "Percent of population with a disability",
+          #                      "Percent of adults with less than college education" ,
+          #                      "Percent of population without health insurance",
+          #                      "Percent of households with no one aged > 14 years speaking English",
+          #                      "Percent of population employed and aged > 16 working outdoors",
+          #                      "Poverty Rate (200% FPL)",
+          #                      "Percent of households with no vehicle ownership",
+          #                      "Percent of households without air conditioning",
+          #                      "Percent without tree canopy coverage",
+          #                      "Percent impervious surface cover"
+          #                    ))),
+          column(2,
+                 uiOutput("chooseStrata")),
+          column(6,
+                 p(uiOutput("blurb")),
+                 p(uiOutput(
+                   "downloadNarrative"
+                 )))
+          
+          
+        ),
+        
+        fluidRow(column(
+          7,
+          wellPanel(
+            HTML("<h3>County Map</h3>"),
+            leafletOutput("map", height = "700px"),
+            downloadLink(outputId = "downloadSingleIndicatorMap", label = "Download the data in this Map")
+          )
+        ),
+        column(5,
+               wellPanel(uiOutput(
+                 "VAtext"
+               )))),
+        
+        fluidRow(
+          column(6,
+                 wellPanel(
+                   HTML("<h3>Statewide comparison</h3>"),
+                   plotlyOutput("plot"),
+                   downloadLink(outputId = "downloadSingleIndicator", label = "Download the data in this figure")
+                 )),
+          column(6,
+                 wellPanel(
+                   HTML("<h3>Differences by race</h3>"),
+                   plotlyOutput("racePlot"),
+                   downloadLink(outputId = "downloadRacePlot", label = "Download the data in this figure")
+                 )),
+          column(12,
+                 wellPanel(
+                   HTML("<h3>Most vulnerable places in the county</h3>"),
+                   DT::dataTableOutput("placeList")
+                 ))
         )
       ),
-      column(5,
-             wellPanel(uiOutput(
-               "VAtext"
-             )))),
       
-      fluidRow(
-        column(6,
-               wellPanel(
-                 HTML("<h3>Statewide comparison</h3>"),
-                 plotlyOutput("plot"),
-                 downloadLink(outputId = "downloadSingleIndicator", label = "Download the data in this figure")
-               )),
-        column(6,
-               wellPanel(
-                 HTML("<h3>Differences by race</h3>"),
-                 plotlyOutput("racePlot"),
-                 downloadLink(outputId = "downloadRacePlot", label = "Download the data in this figure")
-               )),
-        column(12,
-               wellPanel(
-                 HTML("<h3>Most vulnerable places in the county</h3>"),
-                 DT::dataTableOutput("placeList")
-               ))
-      )
-    ),
-    
-    tabPanel(
-      title = "Vulnerability",value = "vulnerability",
-      fluidRow(
-        column(8,
-               includeMarkdown("vulnerability.md")),
-        column(
-          2,
-          selectInput(
-            "exposure",
-            "Exposure Indicator",
-            c(
-              "Projected number of extreme heat days 2040-2060",
-              "Projected number of extreme heat days 2080-2099",
-              "Average Daily Maximum Ozone Concentration",
-              "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-              "Population living in sea level rise inundation areas",
-              "Percent of population currently living in very high wildfire risk areas"
+      tabPanel(
+        title = "Vulnerability",
+        value = "vulnerability",
+        fluidRow(
+          column(8,
+                 includeMarkdown("vulnerability.md")),
+          column(
+            2,
+            selectInput(
+              "exposure",
+              "Exposure Indicator",
+              c(
+                "Projected number of extreme heat days 2040-2060",
+                "Projected number of extreme heat days 2080-2099",
+                "Average Daily Maximum Ozone Concentration",
+                "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
+                "Population living in sea level rise inundation areas",
+                "Percent of population currently living in very high wildfire risk areas"
+              )
+            ),
+            selectInput(
+              "sensitivity",
+              "Sensitivity Indicator",
+              c(
+                "Percent of population aged 65 years or older",
+                "Percent of population age less than 5 years",
+                "Number of Violent Crimes per 1,000 Population",
+                "Percent of population with a disability",
+                "Percent of adults with less than college education" ,
+                "Percent of population without health insurance",
+                "Percent of households with no one aged > 14 years speaking English",
+                "Percent of population employed and aged > 16 working outdoors",
+                "Poverty Rate (200% FPL)",
+                "Percent of households with no vehicle ownership",
+                "Percent of households without air conditioning",
+                "Percent without tree canopy coverage",
+                "Percent impervious surface cover"
+              )
             )
           ),
-          selectInput(
-            "sensitivity",
-            "Sensitivity Indicator",
-            c(
-              "Percent of population aged 65 years or older",
-              "Percent of population age less than 5 years",
-              "Number of Violent Crimes per 1,000 Population",
-              "Percent of population with a disability",
-              "Percent of adults with less than college education" ,
-              "Percent of population without health insurance",
-              "Percent of households with no one aged > 14 years speaking English",
-              "Percent of population employed and aged > 16 working outdoors",
-              "Poverty Rate (200% FPL)",
-              "Percent of households with no vehicle ownership",
-              "Percent of households without air conditioning",
-              "Percent without tree canopy coverage",
-              "Percent impervious surface cover"
-            )
+          column(
+            2,
+            img(class = "img-polaroid",
+                src = "vulnerabilityLegend.png",
+                alt = "Vulnerability Bivariate Legend")
+          )
+          
+        ),
+        
+        fluidRow(column(
+          8, wellPanel(
+            plotlyOutput("triplePlot", height = "600px"),
+            downloadLink(outputId = "downloadVulnerabilityFigure", label = "Download the data in this figure")
           )
         ),
         column(
-          2,
-          img(class = "img-polaroid",
-              src = "vulnerabilityLegend.png",
-              alt = "Vulnerability Bivariate Legend")
-        )
-        
+          4, wellPanel(
+            leafletOutput("vulnMap", height = "600px"),
+            downloadLink(outputId = "downloadVulnerabilityMap", label = "Download the data in this Map")
+          )
+        ))
       ),
       
-      fluidRow(column(
-        8, wellPanel(
-          plotlyOutput("triplePlot", height = "600px"),
-          downloadLink(outputId = "downloadVulnerabilityFigure", label = "Download the data in this figure")
-        )
-      ),
-      column(
-        4, wellPanel(
-          leafletOutput("vulnMap", height = "600px"),
-          downloadLink(outputId = "downloadVulnerabilityMap", label = "Download the data in this Map")
-        )
-      ))
-    ),
-    
-    
-    tabPanel(
-      "Query the Data",value = "query",
-      fluidRow(
-        column(3,
-               selectInput(
-                 "cntyDNLD",
-                 "Select a County",
-                 c("All", sort(unique(
-                   as.character(CHVIdata$county)
-                 )))
-               )),
-        column(3,
-               selectInput(
-                 "indDNLD",
-                 "Select an Indicator",
-                 c(
-                   "All",
-                   "Projected number of extreme heat days 2040-2060",
-                   "Projected number of extreme heat days 2080-2099",
-                   "Average Daily Maximum Ozone Concentration",
-                   "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
-                   "Population living in sea level rise inundation areas",
-                   "Percent of population currently living in very high wildfire risk areas",
-                   "Percent of population aged 65 years or older",
-                   "Percent of population age less than 5 years",
-                   "Number of Violent Crimes per 1,000 Population",
-                   "Percent of population with a disability",
-                   "Percent of adults with less than college education" ,
-                   "Percent of population without health insurance",
-                   "Percent of households with no one aged > 14 years speaking English",
-                   "Percent of population employed and aged > 16 working outdoors",
-                   "Poverty Rate (200% FPL)",
-                   "Percent of households with no vehicle ownership",
-                   "Percent of households without air conditioning",
-                   "Percent without tree canopy coverage",
-                   "Percent impervious surface cover"
-                 )
-               )),
-        column(
-          2,
-          radioButtons(
-            inputId = "scaleDNLD",
-            label = "Select a Geography",
-            choices = c("County", "Census Tract"),
-            selected = "County"
-          )
-        ),
-        column(
-          3,
-          p(),
-          downloadButton(outputId = "downloadData", label = "Download Selected Data")
-        )
-        
-        # ,
-        #
-        # column(3,
-        #        p(),
-        #        downloadButton(outputId = "downloadSpatial", label = "Download Spatial Data")
-        # )
-      ),
-      fluidRow(wellPanel(DT::dataTableOutput("downloadTable")))
-    ),
-    
-    
-    #####  Additional Page  ####
-    
-    navbarMenu(
-      "Take Action",
+      
       tabPanel(
-        "Integrating Climate Change in to Public Health ",
-        fluidRow(column(3, ""),
-                 column(
-                   6,
-                   HTML(
-                     "<div style='text-align:center'>
+        "Query the Data",
+        value = "query",
+        fluidRow(
+          column(3,
+                 selectInput(
+                   "cntyDNLD",
+                   "Select a County",
+                   c("All", sort(unique(
+                     as.character(CHVIdata$county)
+                   )))
+                 )),
+          column(3,
+                 selectInput(
+                   "indDNLD",
+                   "Select an Indicator",
+                   c(
+                     "All",
+                     "Projected number of extreme heat days 2040-2060",
+                     "Projected number of extreme heat days 2080-2099",
+                     "Average Daily Maximum Ozone Concentration",
+                     "Annual Mean Ambient Concentration of Fine Particulate Matter (PM2.5)",
+                     "Population living in sea level rise inundation areas",
+                     "Percent of population currently living in very high wildfire risk areas",
+                     "Percent of population aged 65 years or older",
+                     "Percent of population age less than 5 years",
+                     "Number of Violent Crimes per 1,000 Population",
+                     "Percent of population with a disability",
+                     "Percent of adults with less than college education" ,
+                     "Percent of population without health insurance",
+                     "Percent of households with no one aged > 14 years speaking English",
+                     "Percent of population employed and aged > 16 working outdoors",
+                     "Poverty Rate (200% FPL)",
+                     "Percent of households with no vehicle ownership",
+                     "Percent of households without air conditioning",
+                     "Percent without tree canopy coverage",
+                     "Percent impervious surface cover"
+                   )
+                 )),
+          column(
+            2,
+            radioButtons(
+              inputId = "scaleDNLD",
+              label = "Select a Geography",
+              choices = c("County", "Census Tract"),
+              selected = "County"
+            )
+          ),
+          column(
+            3,
+            p(),
+            downloadButton(outputId = "downloadData", label = "Download Selected Data")
+          )
+          
+          # ,
+          #
+          # column(3,
+          #        p(),
+          #        downloadButton(outputId = "downloadSpatial", label = "Download Spatial Data")
+          # )
+        ),
+        fluidRow(wellPanel(DT::dataTableOutput("downloadTable")))
+      ),
+      
+      
+      #####  Additional Page  ####
+      
+      navbarMenu(
+        "Take Action",
+        tabPanel(
+          "Integrating Climate Change in to Public Health ",
+          fluidRow(column(3, ""),
+                   column(
+                     6,
+                     HTML(
+                       "<div style='text-align:center'>
                    <h1>Integrating Climate Change into Public Health</h1> </div><br>
 <h4>California faces considerable risks from climate change to human health. This is especially true for a number of vulnerable groups. In addition to direct hazards like rising sea levels and extreme heat, climate change can impact service provision by government, business, and community organizations. </p>
 
@@ -511,35 +505,35 @@ People with mental illness are at higher risk of death and illness in extreme we
 Food borne illnesses, caused by contaminated meats or vegetables, drinking water, wastewater or recreational water, are monitored and regulated by environmental health      departments or divisions. Practitioners in this field are                            increasingly addressing climate change as an environmental health issue. Hazardous environmental conditions during and after extreme weather events, such as heat waves, algal blooms, and unsafe air or water quality, are more frequently linked to climate change. Environmental health practitioners plan and mobilize surveillance and monitoring systems, and they provide warnings to prevent or reduce exposure to new and more intense hazards including vector-borne diseases.
 </h4>
 "
-   )
-                   
-                   
-                 ),
-                 column(3, ""))
-      ),
-      tabPanel(
-        "Resources for Climate Change Adaptation Planning",
-        fluidRow(column(3, ""),
-                 column(
-                   6,
-                   HTML(
-                     "<div style='text-align:center'>
+                     )
+                     
+                     
+                   ),
+                   column(3, ""))
+        ),
+        tabPanel(
+          "Resources for Climate Change Adaptation Planning",
+          fluidRow(column(3, ""),
+                   column(
+                     6,
+                     HTML(
+                       "<div style='text-align:center'>
                        <h1>Resources for Climate Change Adaptation Planning</h1> </div><br>
                        <h4>In California, the importance of health, equity, and sustainability are evident in the California Climate Action Team and its Public Health Work Group. Through the California Health in All Policies Task Force, the Office of Health Equity Advisory Committee, and the diverse sectors of the California Climate Action Team, both climate adaption and mitigation are proceeding with an eye to the Health in All Policies approach. The following resources provide additional information related to climate change impacts and adaptation planning across sectors: </h4>
-                       
+
                        <ul>
-                       
-                       
+
+
                             <li>
                        <a href='https://www.phi.org/resources/?resource=climate-change-health-and-equity-a-guide-for-local-health-departments' target='_blank'>Climate Change, Health, and Equity: A Guide for Local Health Departments</a> helps local health departments prepare for and mitigate climate change effects—from drought and heat to flooding and food security—with concrete, implementable suggestions. This guide:<ul><li>Provides a basic summary of climate change and climate impacts on health;</li><li>Prioritizes health equity, explains the disproportionate impacts of climate change on vulnerable communities, and targets solutions first to the communities where they are most needed, including low-income, elderly and people of color communities;</li><li>Connects what we know about climate impacts and climate solutions with the work of local health departments; and</li><li>Offers specific examples of how local health departments can address and ameliorate the impacts of climate change in every area of public health practice.</li></ul>
-                       </li> <li>The 
-                       <a href='https://healthyplacesindex.org/' target='_blank'>California Healthy Places Index (HPI)</a> developed by the Public Health Alliance of Southern California (Alliance) in partnership with the Virginia Commonwealth University’s Center on Society and Health, can be used to explore and change those community conditions that predict life expectancy. The tool includes detailed policy guides to support specific policy interventions that improve community conditions and health. 
+                       </li> <li>The
+                       <a href='https://healthyplacesindex.org/' target='_blank'>California Healthy Places Index (HPI)</a> developed by the Public Health Alliance of Southern California (Alliance) in partnership with the Virginia Commonwealth University’s Center on Society and Health, can be used to explore and change those community conditions that predict life expectancy. The tool includes detailed policy guides to support specific policy interventions that improve community conditions and health.
 
                        </li>
-                       
+
                        <li>
                        <a href='http://climatechange.ca.gov/climate_action_team/index.html' target='_blank'>
-                       California Climate Action Team (CAT) 
+                       California Climate Action Team (CAT)
                        </a>coordinates statewide efforts to implement global warming emission reduction programs and the state’s Climate Adaptation Strategy.
                        </li>
                             <li>
@@ -547,7 +541,7 @@ Food borne illnesses, caused by contaminated meats or vegetables, drinking water
 
                        </li>
                             <li>Through the <a href='https://resilientca.org/' target='_blank'>California Adaptation Clearinghouse</a> you can explore resources in the Adaptation Clearinghouse database by topic area, including climate impacts and potential response measures. These topics are directly linked to Safeguarding California, California’s Climate Adaptation Strategy.
-                      
+
                        </li>
                             <li>
                        <a href='https://trackingcalifornia.org' target='_blank'>Tracking California</a> is a program of the Public Health Institute, in partnership with the California Department of Public Health and the Centers for Disease Control's (CDC) National Environmental Public Health Tracking Program. Tracking California works to make environmental health data and information publicly-available through the development of a web-based data query system, state-of-the-art data displays, and innovative web tools and services. We aim to make these data and information accessible and useful to a variety of stakeholders including communities, governments, academia, and private partners.</li>
@@ -566,14 +560,14 @@ actions that will be taken to safeguard residents,  property, communities, and n
                        <a href='https://www.cdc.gov/climateandhealth/default.htm' target='_blank'>Climate and Health Program</a>, is the Centers for Disease Control and Prevention’s only HHS investment in climate change adaptation. It supports state and city health department efforts to develop and pilot methods to adapt to the present and future health effects of climate change. Funded states use the Building Resilience Against Climate Effects (BRACE) framework develop and implement health adaptation plans that impact health and address gaps in critical public health functions and services. <a href='https://www.noaa.gov/climate' target='_blank'>NOAA Climate.gov</a> provides timely and authoritative information about climate to promote public understanding of climate science and climate-related events through videos, stories, images, and data visualizations; we make common data products and services easy to access and use; and it provides tools and resources that help people make informed decisions about climate risks, vulnerability, and resilience.
                        </li>
                             <li>
-                       <a href='https://practicegreenhealth.org/topics/climate-and-health/climate-and-health' target='_blank'>Addressing Climate Change in the Health Care Setting</a> provides a toolkit for reducing green house gas emissions with several kinds of resources including tips on getting started, potential mitigation programs in different sectors, and an outline of some of the many resources, model programs and guidelines available to move the process forward. 
+                       <a href='https://practicegreenhealth.org/topics/climate-and-health/climate-and-health' target='_blank'>Addressing Climate Change in the Health Care Setting</a> provides a toolkit for reducing green house gas emissions with several kinds of resources including tips on getting started, potential mitigation programs in different sectors, and an outline of some of the many resources, model programs and guidelines available to move the process forward.
 
                        </li>
                             <li>The
-                       <a href='http://www.opc.ca.gov/updating-californias-sea-level-rise-guidance/' target='_blank'>State of California Sea-Level Rise Guidance Document</a>, 2018 Update reflects advances in sea-level rise science and addresses the needs of state agencies and local governments as they incorporate sea-level rise into their planning, permitting, and investment decisions. 
+                       <a href='http://www.opc.ca.gov/updating-californias-sea-level-rise-guidance/' target='_blank'>State of California Sea-Level Rise Guidance Document</a>, 2018 Update reflects advances in sea-level rise science and addresses the needs of state agencies and local governments as they incorporate sea-level rise into their planning, permitting, and investment decisions.
 
                        </li>
-                            <li>The Office of Environmental Health Hazard Assessment (OEHHA) develops research on    <a href='https://oehha.ca.gov/climate-change/general-info/human-health-impacts-climate-change' target='_blank'>human health</a> studies related to the impacts of climate change, the     <a href='https://oehha.ca.gov/climate-change/document/indicators-climate-change-california' target='_blank'>Indicators of Climate Change in California report</a>, and the    <a href='https://oehha.ca.gov/climate-change/document/research-climate-change-archived-bibliographies' target='_blank'>Recent Research on Climate Change report</a>. 
+                            <li>The Office of Environmental Health Hazard Assessment (OEHHA) develops research on    <a href='https://oehha.ca.gov/climate-change/general-info/human-health-impacts-climate-change' target='_blank'>human health</a> studies related to the impacts of climate change, the     <a href='https://oehha.ca.gov/climate-change/document/indicators-climate-change-california' target='_blank'>Indicators of Climate Change in California report</a>, and the    <a href='https://oehha.ca.gov/climate-change/document/research-climate-change-archived-bibliographies' target='_blank'>Recent Research on Climate Change report</a>.
                        </li>
                             <li>
                        <a href='https://oehha.ca.gov/calenviroscreen/report/calenviroscreen-30' target='_blank'>CalEnviroScreen</a> is a science-based tool that identifies the California communities most burdened by pollution from multiple sources and most vulnerable to its effects.
@@ -583,32 +577,32 @@ actions that will be taken to safeguard residents,  property, communities, and n
                        <a href='https://cal-adapt.org/' target='_blank'>Cal-Adapt</a> provides access to data and information that has been, and continues to be, produced by California’s scientific and research community to predict likely climate change scenarios in California through the 21st Century. The data available on this site offers a view of how climate change might affect California at the local level. You can work with visualization tools, access data, and participate in community sharing to contribute your own knowledge.
 
                        </li>
-                            <li>The 
+                            <li>The
                        <a href='http://www.opr.ca.gov/planning/general-plan/' target='_blank'>General Plan Guidelines</a> from the Governor’s Office of Planning and Research provides guidance for local governments for the local general plan- the long- term blueprint for the community’s vision of future growth, including considerations for climate change, land use, housing, and other elements that affect health.
 
                        </li>
-                           
+
                             <li>The <a href='http://resources.ca.gov/climate/safeguarding/local-action/' target='_blank'>California Climate Adaptation Planning Guide</a> developed by CNRA, provides guidance to support regional and local communities in proactively addressing climate change, including step-by- step process for local and regional climate vulnerability assessments and adaptation strategy development.
 
-                       
+
                        </li>
-                           
+
                        </ul>
-                       
+
                        "
-                   )
-                   
-                   
-                 ),
-                 column(3, ""))
-      ),
-      tabPanel(
-        "The Ten Essential Services and Climate Change",
-        fluidRow(column(2, ""),
-                 column(
-                   8,
-                   HTML(
-                     "<div style='text-align:center'>
+                     )
+                     
+                     
+                   ),
+                   column(3, ""))
+        ),
+        tabPanel(
+          "The Ten Essential Services and Climate Change",
+          fluidRow(column(2, ""),
+                   column(
+                     8,
+                     HTML(
+                       "<div style='text-align:center'>
                    <h1>The Ten Essential Services and Climate Change</h1>
                    <br>
                    <h4>The <a href='http://www.cdc.gov/nphpsp/essentialservices.html' target+'_blank'>Ten Essential Public Health Services</a> are tenets of public health practice that can be applied to climate change planning and implementation activities by a health department. Many activities for climate change planning, interventions, and capacity building are public health evidence-based practices that address adaptation and resilience planning, as well as the social determinants of health. Climate adaptation planning also supports the <a href='http://www.phaboard.org/' target='_blank'>public health accreditation</a> efforts already underway by many health departments. </h4>
@@ -624,87 +618,88 @@ actions that will be taken to safeguard residents,  property, communities, and n
 
 
           </div>"
-                   )
-                   
-                   
-                 ),
-                 column(2, ""))
+                     )
+                     
+                     
+                   ),
+                   column(2, ""))
+        )
       )
+      
+      
+      
+      # navbarMenu(
+      #   "How to Use",
+      #  tabPanel("The County Snapshot Page",
+      #            fluidRow(
+      #              column(3,
+      #                     wellPanel(includeMarkdown("howToSnapshot.md"))),
+      #              column(9,
+      #                     wellPanel(
+      #                       img(
+      #                         class = "img-polaroid",
+      #                         src = "snapGif.gif",
+      #                         alt = "How To County Snapshot Page",
+      #                         width = "100%"
+      #                       )
+      #                     ))
+      #
+      #            )),
+      #   tabPanel("The Single Indicator Page",
+      #            fluidRow(
+      #              column(3,
+      #                     wellPanel(includeMarkdown(
+      #                       "howToIndicator.md"
+      #                     ))),
+      #              column(9,
+      #                     wellPanel(
+      #                       img(
+      #                         class = "img-polaroid",
+      #                         src = "indGif.gif",
+      #                         alt = "How To Indicator Page",
+      #                         width = "100%"
+      #                       )
+      #                     ))
+      #
+      #            )),
+      #  tabPanel("The Vulnerability Page",
+      #           fluidRow(
+      #             column(3,
+      #                    wellPanel(includeMarkdown("howToVuln.md"))),
+      #             column(9,
+      #                    wellPanel(
+      #                      img(
+      #                        class = "img-polaroid",
+      #                        src = "vulnGif2.gif",
+      #                        alt = "How To Vulnerability Page",
+      #                        width = "100%"
+      #                      )
+      #                    ))
+      #
+      #           )),
+      #   tabPanel("The Query Your Data Page",
+      #            fluidRow(
+      #              column(3,
+      #                     wellPanel(includeMarkdown("howToQuery.md"))),
+      #
+      #              column(9,
+      #                     wellPanel(
+      #                       img(
+      #                         class = "img-polaroid",
+      #                         src = "queryGif.gif",
+      #                         alt = "How To Query Page",
+      #                         width = "100%"
+      #                       )
+      #                     ))
+      #
+      #            ))
+      # )
+      # tabPanel(
+      #   "Testing",
+      #   dataTableOutput("test"),
+      #   dataTableOutput("test2"))
+      #####  Finish Additional  #####
+      
     )
-    
-    
-    
-    # navbarMenu(
-    #   "How to Use",
-    #  tabPanel("The County Snapshot Page",
-    #            fluidRow(
-    #              column(3,
-    #                     wellPanel(includeMarkdown("howToSnapshot.md"))),
-    #              column(9,
-    #                     wellPanel(
-    #                       img(
-    #                         class = "img-polaroid",
-    #                         src = "snapGif.gif",
-    #                         alt = "How To County Snapshot Page",
-    #                         width = "100%"
-    #                       )
-    #                     ))
-    #
-    #            )),
-    #   tabPanel("The Single Indicator Page",
-    #            fluidRow(
-    #              column(3,
-    #                     wellPanel(includeMarkdown(
-    #                       "howToIndicator.md"
-    #                     ))),
-    #              column(9,
-    #                     wellPanel(
-    #                       img(
-    #                         class = "img-polaroid",
-    #                         src = "indGif.gif",
-    #                         alt = "How To Indicator Page",
-    #                         width = "100%"
-    #                       )
-    #                     ))
-    #
-    #            )),
-    #  tabPanel("The Vulnerability Page",
-    #           fluidRow(
-    #             column(3,
-    #                    wellPanel(includeMarkdown("howToVuln.md"))),
-    #             column(9,
-    #                    wellPanel(
-    #                      img(
-    #                        class = "img-polaroid",
-    #                        src = "vulnGif2.gif",
-    #                        alt = "How To Vulnerability Page",
-    #                        width = "100%"
-    #                      )
-    #                    ))
-    #
-    #           )),
-    #   tabPanel("The Query Your Data Page",
-    #            fluidRow(
-    #              column(3,
-    #                     wellPanel(includeMarkdown("howToQuery.md"))),
-    #
-    #              column(9,
-    #                     wellPanel(
-    #                       img(
-    #                         class = "img-polaroid",
-    #                         src = "queryGif.gif",
-    #                         alt = "How To Query Page",
-    #                         width = "100%"
-    #                       )
-    #                     ))
-    #
-    #            ))
-    # )
-    # tabPanel(
-    #   "Testing",
-    #   dataTableOutput("test"),
-    #   dataTableOutput("test2"))
-    #####  Finish Additional  #####
-    
   )
-)
+  
